@@ -46,6 +46,8 @@ jobs:
 
       - name: Build project
         run: npx expo export -p web
+        env:
+          EXPO_PUBLIC_BASE_URL: /yumly
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
