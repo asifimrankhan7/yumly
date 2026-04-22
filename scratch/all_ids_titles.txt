@@ -1,0 +1,200 @@
+it_1|Margherita Pizza
+mx_1|Gourmet Chicken Tacos
+ch_1|Kung Pao Chicken
+br_1|Fluffy Pancakes
+ds_1|Chocolate Lava Cake
+v_1|Paneer Butter Masala
+v_2|Chana Masala
+v_3|Aloo Gobi
+v_4|Palak Paneer
+v_5|Dal Makhani
+v_6|Mixed Veg Curry
+v_7|Baingan Bharta
+v_8|Veg Kolhapuri
+v_9|Mutter Paneer
+v_10|Malai Kofta
+v_11|Kadai Paneer
+v_12|Bhindi Masala
+v_13|Rajma Chawal
+v_14|Dum Aloo
+v_15|Navratan Korma
+v_16|Aloo Mutter
+v_17|Dal Tadka
+v_18|Shahi Paneer
+v_19|Veg Jalfrezi
+v_20|Mushroom Masala
+v_21|Paneer Tikka Masala
+v_22|Aloo Jeera
+v_23|Lauki Kofta
+v_24|Kala Chana Curry
+v_25|Veg Makhanwala
+v_26|Kashmiri Dum Aloo
+v_27|Paneer Bhurji
+v_28|Methi Malai Mutter
+v_29|Sarson Ka Saag
+v_30|Aloo Capsicum
+v_31|Undhiyu
+v_32|Pindi Chole
+v_33|Gatte Ki Sabzi
+v_34|Soya Chaap Curry
+v_35|Cabbage Thoran
+v_36|Baby Corn Masala
+v_37|Veg Handi
+v_38|Aloo Parwal
+v_39|Karela Masala
+v_40|Tinda Masala
+v_41|Veg Korma
+v_42|Mushroom Do Pyaza
+v_43|Paneer Do Pyaza
+v_44|Arbi Masala
+v_45|Avial
+v_46|Poriyal
+v_47|Gutthi Vankaya
+v_48|Mirchi Ka Salan
+v_49|Dal Fry
+v_50|Veg Biryani
+nv_1|Butter Chicken
+nv_2|Chicken Tikka Masala
+nv_3|Chicken Biryani
+nv_4|Mutton Rogan Josh
+nv_5|Fish Curry
+nv_6|Prawn Masala
+nv_7|Chicken Chettinad
+nv_8|Goan Fish Curry
+nv_9|Mutton Korma
+nv_10|Chicken Korma
+nv_11|Keema Mutter
+nv_12|Egg Curry
+nv_13|Chicken 65
+nv_14|Tandoori Chicken
+nv_15|Kadai Chicken
+nv_16|Mutton Biryani
+nv_17|Chicken Saag
+nv_18|Fish Tikka Masala
+nv_19|Prawn Pepper Fry
+nv_20|Chicken Curry
+nv_21|Mutton Do Pyaza
+nv_22|Chicken Jalfrezi
+nv_23|Andhra Chicken Curry
+nv_24|Beef Ularthiyathu
+nv_25|Pork Vindaloo
+nv_26|Chicken Vindaloo
+nv_27|Mutton Sukka
+nv_28|Fish Molee
+nv_29|Chicken Rezala
+nv_30|Chicken Cafreal
+nv_31|Laal Maas
+nv_32|Kosha Mangsho
+nv_33|Chicken Nihari
+nv_34|Mutton Nihari
+nv_35|Prawn Balchao
+nv_36|Chicken Xacuti
+nv_37|Chicken Ghee Roast
+nv_38|Mutton Pepper Fry
+nv_39|Karahi Chicken
+nv_40|Tawa Chicken
+nv_41|Chicken Do Pyaza
+nv_42|Egg Roast
+nv_43|Meen Moilee
+nv_44|Prawn Thokku
+nv_45|Chicken Salan
+nv_46|Mutton Handi
+nv_47|Chicken Bhuna
+nv_48|Mutton Bhuna
+nv_49|Fish Fry
+nv_50|Amritsari Chicken
+br_2|Aloo Paratha
+br_3|Chole Bhature
+br_4|Paneer Kulcha
+br_5|Bedmi Puri
+br_6|Poha (Indori Style)
+br_7|Missi Roti
+br_8|Gobi Paratha
+br_9|Amritsari Naan
+br_10|Dal Kachori
+br_11|Methi Thepla
+br_12|Masala Dosa
+br_13|Idli Sambar
+br_14|Medu Vada
+br_15|Uttapam
+br_16|Rava Upma
+br_17|Appam with Stew
+br_18|Puttu with Kadala Curry
+br_19|Ven Pongal
+br_20|Pesharattu
+br_21|Lemon Rice (Breakfast Style)
+br_22|Jadoh (Meghalaya Style)
+br_23|Thukpa (Tibetan Noodle Soup)
+br_24|Koldil with Egg (Banana Flower)
+br_25|Pitha (Assamese Rice Cake)
+br_26|Smoked Pork with Bamboo Shoot
+br_27|Full English Breakfast
+br_28|French Croissants
+br_29|Belgian Waffles
+br_30|American Buttermilk Pancakes
+br_31|Mexican Chilaquiles
+br_32|Israeli Shakshuka
+br_33|Turkish Menemen
+br_34|Japanese Miso Breakfast
+br_35|Chinese Congee
+br_36|Vietnamese Banh Mi (Breakfast)
+br_37|Brazilian Pão de Queijo
+br_38|Gallo Pinto
+br_39|Philippine Tapsilog
+br_40|Avocado Toast
+br_41|Swedish Pannkakor
+br_42|Moroccan Baghrir
+br_43|Nigerian Akara
+br_44|Russian Syrniki
+br_45|Swiss Bircher Muesli
+br_46|Greek Yogurt with Honey
+br_47|Portuguese Egg Tarts
+br_48|Italian Breakfast
+br_49|Spanish Churros
+br_50|Jamaican Ackee and Saltfish
+sn_1|Samosa
+sn_2|Pani Puri
+sn_3|Pakora (Mixed Veg Fritters)
+sn_4|Dahi Papri Chaat
+sn_5|Spring Rolls
+sn_6|Nachos with Salsa
+sn_7|Bruschetta
+sn_8|Chicken Wings (Buffalo)
+sn_9|Cheese Garlic Bread
+sn_10|Aloo Tikki
+ds_2|Gulab Jamun
+ds_3|Tiramisu
+ds_4|Chocolate Lava Cake
+ds_5|Rasmalai
+ds_6|Crème Brûlée
+ds_7|Gajar Ka Halwa
+ds_8|Baklava
+ds_9|Mango Kulfi
+ds_10|New York Cheesecake
+it_2|Spaghetti Carbonara
+it_3|Lasagne al Forno
+it_4|Risotto alla Milanese
+it_5|Fettuccine Alfredo
+it_6|Osso Buco
+it_7|Penne Arrabbiata
+it_8|Pizza Quattro Stagioni
+it_9|Gnocchi al Pomodoro
+it_10|Cacio e Pepe
+mx_2|Beef Tacos
+mx_3|Guacamole
+mx_4|Enchiladas Verdes
+mx_5|Quesadilla
+mx_6|Pozole Rojo
+mx_7|Tamales
+mx_8|Chiles Rellenos
+mx_9|Huevos Rancheros
+mx_10|Mole Poblano
+ch_2|Kung Pao Chicken
+ch_3|Dim Sum (Har Gow)
+ch_4|Mapo Tofu
+ch_5|Peking Duck
+ch_6|Egg Fried Rice
+ch_7|Sweet & Sour Pork
+ch_8|Hot and Sour Soup
+ch_9|General Tso's Chicken
+ch_10|Dan Dan Noodles

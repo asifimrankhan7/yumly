@@ -1,0 +1,200 @@
+it_1 Margherita Pizza margherita_pizza.png
+mx_1 Gourmet Chicken Tacos chicken_tacos.png
+ch_1 Kung Pao Chicken kung_pao_chicken.png
+br_1 Fluffy Pancakes pancakes.png
+ds_1 Chocolate Lava Cake lava_cake.png
+v_1 Paneer Butter Masala paneer_butter_masala.png
+v_2 Chana Masala chana_masala.png
+v_3 Aloo Gobi aloo_gobi.png
+v_4 Palak Paneer palak_paneer.png
+v_5 Dal Makhani dal_makhani.png
+v_6 Mixed Veg Curry mixed_veg_curry.png
+v_7 Baingan Bharta baingan_bharta.png
+v_8 Veg Kolhapuri veg_kolhapuri.png
+v_9 Mutter Paneer mutter_paneer.png
+v_10 Malai Kofta malai_kofta.png
+v_11 Kadai Paneer kadai_paneer.png
+v_12 Bhindi Masala bhindi_masala.png
+v_13 Rajma Chawal rajma_chawal.png
+v_14 Dum Aloo dum_aloo.png
+v_15 Navratan Korma navratan_korma.png
+v_16 Aloo Mutter aloo_mutter.png
+v_17 Dal Tadka dal_tadka.png
+v_18 Shahi Paneer shahi_paneer.png
+v_19 Veg Jalfrezi veg_jalfrezi.png
+v_20 Mushroom Masala mushroom_masala.png
+v_21 Paneer Tikka Masala paneer_tikka_masala.png
+v_22 Aloo Jeera aloo_jeera.png
+v_23 Lauki Kofta lauki_kofta.png
+v_24 Kala Chana Curry kala_chana.png
+v_25 Veg Makhanwala veg_makhanwala.png
+v_26 Kashmiri Dum Aloo kashmiri_dum_aloo.png
+v_27 Paneer Bhurji veg_jalfrezi.png
+v_28 Methi Malai Mutter mutter_paneer.png
+v_29 Sarson Ka Saag palak_paneer.png
+v_30 Aloo Capsicum aloo_gobi.png
+v_31 Undhiyu mixed_veg_curry.png
+v_32 Pindi Chole chana_masala.png
+v_33 Gatte Ki Sabzi dal_tadka.png
+v_34 Soya Chaap Curry kadai_paneer.png
+v_35 Cabbage Thoran aloo_gobi.png
+v_36 Baby Corn Masala kadai_paneer.png
+v_37 Veg Handi mixed_veg_curry.png
+v_38 Aloo Parwal aloo_gobi.png
+v_39 Karela Masala bhindi_masala.png
+v_40 Tinda Masala bhindi_masala.png
+v_41 Veg Korma navratan_korma.png
+v_42 Mushroom Do Pyaza veg_jalfrezi.png
+v_43 Paneer Do Pyaza kadai_paneer.png
+v_44 Arbi Masala bhindi_masala.png
+v_45 Avial mixed_veg_curry.png
+v_46 Poriyal aloo_gobi.png
+v_47 Gutthi Vankaya baingan_bharta.png
+v_48 Mirchi Ka Salan dal_tadka.png
+v_49 Dal Fry dal_tadka.png
+v_50 Veg Biryani rajma_chawal.png
+nv_1 Butter Chicken butter_chicken.png
+nv_2 Chicken Tikka Masala chicken_tikka_masala.png
+nv_3 Chicken Biryani chicken_biryani.png
+nv_4 Mutton Rogan Josh mutton_rogan_josh.png
+nv_5 Fish Curry chicken_curry.png
+nv_6 Prawn Masala chicken_jalfrezi.png
+nv_7 Chicken Chettinad chicken_chettinad.png
+nv_8 Goan Fish Curry chicken_madras.png
+nv_9 Mutton Korma chicken_korma.png
+nv_10 Chicken Korma chicken_korma.png
+nv_11 Keema Mutter chicken_curry.png
+nv_12 Egg Curry chicken_curry.png
+nv_13 Chicken 65 chicken_65.png
+nv_14 Tandoori Chicken tandoori_chicken.png
+nv_15 Kadai Chicken karahi_chicken.png
+nv_16 Mutton Biryani chicken_biryani.png
+nv_17 Chicken Saag chicken_saag.png
+nv_18 Fish Tikka Masala chicken_tikka_masala.png
+nv_19 Prawn Pepper Fry chicken_chettinad.png
+nv_20 Chicken Curry chicken_curry.png
+nv_21 Mutton Do Pyaza chicken_do_pyaza.png
+nv_22 Chicken Jalfrezi chicken_jalfrezi.png
+nv_23 Andhra Chicken Curry chicken_madras.png
+nv_24 Beef Ularthiyathu chicken_chettinad.png
+nv_25 Pork Vindaloo chicken_vindaloo.png
+nv_26 Chicken Vindaloo chicken_vindaloo.png
+nv_27 Mutton Sukka chicken_chettinad.png
+nv_28 Fish Molee chicken_korma.png
+nv_29 Chicken Rezala murgh_rezala.png
+nv_30 Chicken Cafreal chicken_cafreal.png
+nv_31 Laal Maas chicken_madras.png
+nv_32 Kosha Mangsho chicken_do_pyaza.png
+nv_33 Chicken Nihari chicken_curry.png
+nv_34 Mutton Nihari chicken_curry.png
+nv_35 Prawn Balchao chicken_vindaloo.png
+nv_36 Chicken Xacuti chicken_xacuti.png
+nv_37 Chicken Ghee Roast tandoori_chicken.png
+nv_38 Mutton Pepper Fry chicken_chettinad.png
+nv_39 Karahi Chicken karahi_chicken.png
+nv_40 Tawa Chicken tandoori_chicken.png
+nv_41 Chicken Do Pyaza chicken_do_pyaza.png
+nv_42 Egg Roast chicken_65.png
+nv_43 Meen Moilee chicken_korma.png
+nv_44 Prawn Thokku chicken_jalfrezi.png
+nv_45 Chicken Salan chicken_curry.png
+nv_46 Mutton Handi chicken_do_pyaza.png
+nv_47 Chicken Bhuna karahi_chicken.png
+nv_48 Mutton Bhuna karahi_chicken.png
+nv_49 Fish Fry amritsari_chicken.png
+nv_50 Amritsari Chicken amritsari_chicken.png
+br_2 Aloo Paratha aloo_paratha.png
+br_3 Chole Bhature chole_bhature.png
+br_4 Paneer Kulcha paneer_kulcha.png
+br_5 Bedmi Puri bedmi_puri.png
+br_6 Poha (Indori Style) poha.png
+br_7 Missi Roti missi_roti.png
+br_8 Gobi Paratha gobi_paratha.png
+br_9 Amritsari Naan amritsari_naan.png
+br_10 Dal Kachori dal_kachori.png
+br_11 Methi Thepla methi_thepla.png
+br_12 Masala Dosa masala_dosa.png
+br_13 Idli Sambar idli_sambar.png
+br_14 Medu Vada medu_vada.png
+br_15 Uttapam uttapam.png
+br_16 Rava Upma rava_upma.png
+br_17 Appam with Stew appam.png
+br_18 Puttu with Kadala Curry puttu.png
+br_19 Ven Pongal masala_dosa.png
+br_20 Pesharattu uttapam.png
+br_21 Lemon Rice (Breakfast Style) idli_sambar.png
+br_22 Jadoh (Meghalaya Style) mixed_veg_curry.png
+br_23 Thukpa (Tibetan Noodle Soup) chicken_curry.png
+br_24 Koldil with Egg (Banana Flower) paneer_butter_masala.png
+br_25 Pitha (Assamese Rice Cake) aloo_paratha.png
+br_26 Smoked Pork with Bamboo Shoot chicken_biryani.png
+br_27 Full English Breakfast aloo_gobi.png
+br_28 French Croissants paneer_butter_masala.png
+br_29 Belgian Waffles poha.png
+br_30 American Buttermilk Pancakes methi_thepla.png
+br_31 Mexican Chilaquiles chole_bhature.png
+br_32 Israeli Shakshuka margherita_pizza.png
+br_33 Turkish Menemen dal_tadka.png
+br_34 Japanese Miso Breakfast mutter_paneer.png
+br_35 Chinese Congee dal_makhani.png
+br_36 Vietnamese Banh Mi (Breakfast) chicken_curry.png
+br_37 Brazilian Pão de Queijo bedmi_puri.png
+br_38 Gallo Pinto mixed_veg_curry.png
+br_39 Philippine Tapsilog chicken_biryani.png
+br_40 Avocado Toast aloo_paratha.png
+br_41 Swedish Pannkakor masala_dosa.png
+br_42 Moroccan Baghrir poha.png
+br_43 Nigerian Akara dal_tadka.png
+br_44 Russian Syrniki methi_thepla.png
+br_45 Swiss Bircher Muesli mixed_veg_curry.png
+br_46 Greek Yogurt with Honey idli_sambar.png
+br_47 Portuguese Egg Tarts margherita_pizza.png
+br_48 Italian Breakfast paneer_butter_masala.png
+br_49 Spanish Churros chole_bhature.png
+br_50 Jamaican Ackee and Saltfish chicken_curry.png
+sn_1 Samosa samosa.png
+sn_2 Pani Puri bedmi_puri.png
+sn_3 Pakora (Mixed Veg Fritters) mixed_veg_curry.png
+sn_4 Dahi Papri Chaat poha.png
+sn_5 Spring Rolls veg_jalfrezi.png
+sn_6 Nachos with Salsa chole_bhature.png
+sn_7 Bruschetta margherita_pizza.png
+sn_8 Chicken Wings (Buffalo) chicken_65.png
+sn_9 Cheese Garlic Bread amritsari_naan.png
+sn_10 Aloo Tikki dum_aloo.png
+ds_2 Gulab Jamun dal_makhani.png
+ds_3 Tiramisu paneer_butter_masala.png
+ds_4 Chocolate Lava Cake dal_tadka.png
+ds_5 Rasmalai navratan_korma.png
+ds_6 Crème Brûlée shahi_paneer.png
+ds_7 Gajar Ka Halwa rajma_chawal.png
+ds_8 Baklava methi_thepla.png
+ds_9 Mango Kulfi malai_kofta.png
+ds_10 New York Cheesecake palak_paneer.png
+it_2 Spaghetti Carbonara spaghetti_carbonara.png
+it_3 Lasagne al Forno chicken_biryani.png
+it_4 Risotto alla Milanese mutter_paneer.png
+it_5 Fettuccine Alfredo paneer_kulcha.png
+it_6 Osso Buco chicken_korma.png
+it_7 Penne Arrabbiata veg_jalfrezi.png
+it_8 Pizza Quattro Stagioni margherita_pizza.png
+it_9 Gnocchi al Pomodoro dum_aloo.png
+it_10 Cacio e Pepe aloo_paratha.png
+mx_2 Beef Tacos chicken_curry.png
+mx_3 Guacamole mixed_veg_curry.png
+mx_4 Enchiladas Verdes chicken_tikka_masala.png
+mx_5 Quesadilla paneer_kulcha.png
+mx_6 Pozole Rojo chicken_chettinad.png
+mx_7 Tamales bedmi_puri.png
+mx_8 Chiles Rellenos bhindi_masala.png
+mx_9 Huevos Rancheros poha.png
+mx_10 Mole Poblano chicken_do_pyaza.png
+ch_2 Kung Pao Chicken chicken_jalfrezi.png
+ch_3 Dim Sum (Har Gow) medu_vada.png
+ch_4 Mapo Tofu palak_paneer.png
+ch_5 Peking Duck tandoori_chicken.png
+ch_6 Egg Fried Rice poha.png
+ch_7 Sweet & Sour Pork chicken_madras.png
+ch_8 Hot and Sour Soup dal_tadka.png
+ch_9 General Tso's Chicken chicken_65.png
+ch_10 Dan Dan Noodles chicken_saag.png
