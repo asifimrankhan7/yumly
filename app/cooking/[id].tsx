@@ -79,9 +79,14 @@ export default function CookingScreen() {
 
       setIsSpeaking(true);
       Speech.speak(currentInstruction.text, {
+        language: "en-US",
+        rate: 0.9,
         onDone: () => setIsSpeaking(false),
         onStopped: () => setIsSpeaking(false),
-        onError: () => setIsSpeaking(false),
+        onError: (error) => {
+          console.warn("Speech error:", error);
+          setIsSpeaking(false);
+        },
       });
     } catch (error) {
       console.warn("Speech error:", error);
