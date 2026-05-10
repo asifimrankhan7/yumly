@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   mealCard: {
     marginHorizontal: SPACING.m,
     marginBottom: SPACING.m,
-    backgroundColor: "white",
+    backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
     ...SHADOWS.small,
     overflow: "hidden",
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   proportionTag: {
-    backgroundColor: "#FFF9F0",
+    backgroundColor: "rgba(244, 162, 74, 0.1)",
     paddingHorizontal: SPACING.s,
     paddingVertical: 2,
     borderRadius: 4,
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: "#FFF9F0",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: SPACING.m,

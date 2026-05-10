@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { FavoritesProvider } from "../src/context/FavoritesContext";
 import { MealPlanProvider } from "../src/context/MealPlanContext";
+import { COLORS } from "../src/constants/theme";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function RootLayout() {
             <Stack
               screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: "#F9F6F0" },
+                contentStyle: { backgroundColor: COLORS.background },
               }}
             >
               <Stack.Screen name="(tabs)" />

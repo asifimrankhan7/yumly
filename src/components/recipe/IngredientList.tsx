@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   servingsControl: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: RADIUS.m,
     padding: SPACING.xs,
   },
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.m,
   },
   iconContainer: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: SPACING.s,
     borderRadius: RADIUS.s,
     marginRight: SPACING.s,

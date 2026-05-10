@@ -1,17 +1,19 @@
 export const COLORS = {
-  primary: "#FF6B35", // Industry standard food app orange
-  primaryLight: "#FFECD1",
+  primary: "#f4a24a", // New premium gold/orange
+  primaryLight: "rgba(244, 162, 74, 0.15)",
   secondary: "#2E8B57",
-  background: "#F8F9FA",
-  card: "#FFFFFF",
-  text: "#1A1C1E",
-  textLight: "#6C757D",
-  border: "#E9ECEF",
+  background: "#0a0a0b", // Deep onyx
+  card: "#18181c", // Dark card
+  text: "#f0ede8", // Off-white text
+  textLight: "#9a9690", // Muted text
+  border: "rgba(255, 255, 255, 0.08)", // Subtle border
   success: "#25C166",
   error: "#FF3B30",
   warning: "#FFCC00",
   veg: "#24963F",
   nonVeg: "#AF3333",
+  accent: "#f4a24a",
+  bg3: "#1c1c21",
 };
 
 export const SPACING = {
@@ -36,21 +38,21 @@ export const SHADOWS = {
   small: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
   },
   medium: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   large: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 16,
     elevation: 8,
   },

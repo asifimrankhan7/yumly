@@ -151,18 +151,17 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
     padding: SPACING.m,
     marginBottom: SPACING.m,
     borderWidth: 1,
-    borderColor: "#F0F0F0",
-    ...SHADOWS.small,
+    borderColor: COLORS.border,
   },
   containerCompleted: {
-    backgroundColor: "#F8F8F8",
-    borderColor: "#E0E0E0",
-    opacity: 0.8,
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    borderColor: COLORS.border,
+    opacity: 0.6,
   },
   header: {
     flexDirection: "row",

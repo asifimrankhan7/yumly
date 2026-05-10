@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m + 4,
     paddingVertical: SPACING.s + 2,
     borderRadius: RADIUS.xl,
-    backgroundColor: "#F2F1ED", // Soft light gray/cream for inactive
+    backgroundColor: "rgba(255,255,255,0.08)", // Dark inactive pill
   },
   pillActive: {
     backgroundColor: COLORS.primary, // Brown highlight

@@ -207,7 +207,7 @@ export default function CookingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
 
       {/* Header */}
       <View style={styles.header}>
@@ -383,7 +383,7 @@ export default function CookingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: "row",
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.s,
     borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F5",
+    borderBottomColor: COLORS.border,
     height: 60,
   },
   mainContent: {
@@ -436,11 +436,12 @@ const styles = StyleSheet.create({
     width: 40,
   },
   instructionCard: {
-    backgroundColor: "#F9F6F0",
+    backgroundColor: COLORS.card,
     padding: SPACING.l,
     borderRadius: RADIUS.l,
     minHeight: 140,
-    ...SHADOWS.small,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   instructionHeaderRow: {
     flexDirection: "row",
@@ -508,10 +509,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.m,
     borderTopWidth: 1,
-    borderTopColor: "#F5F5F5",
+    borderTopColor: COLORS.border,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "white",
+    backgroundColor: COLORS.card,
     width: "100%",
   },
   navBtn: {
@@ -556,12 +557,13 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
   },
   successContent: {
-    backgroundColor: "white",
+    backgroundColor: COLORS.card,
     borderRadius: RADIUS.xl,
     padding: SPACING.xl,
     alignItems: "center",
     width: "100%",
-    ...SHADOWS.medium,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   successIconCircle: {
     width: 100,

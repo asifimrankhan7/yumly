@@ -79,7 +79,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => item.id}
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 100,
     height: 30,
+    tintColor: COLORS.text,
   },
   headerRight: {
     flexDirection: "row",
