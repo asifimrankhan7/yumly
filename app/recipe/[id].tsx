@@ -64,8 +64,8 @@ export default function RecipeDetailScreen() {
 
     if (shouldStartCooking) {
       router.push({
-        pathname: "/cooking/[id]",
-        params: { id: recipe.id },
+        pathname: `/cooking/${recipe.id}`,
+        params: { servings: servings }
       });
     } else {
       router.push("/(tabs)/mealplan");
@@ -206,7 +206,9 @@ export default function RecipeDetailScreen() {
 
               <View style={styles.servingsCountContainer}>
                 <Text style={styles.servingsNumber}>{servings}</Text>
-                <Text style={styles.servingsLabel}>Members</Text>
+                <Text style={styles.servingsLabel}>
+                  {servings === 1 ? "Member" : "Members"}
+                </Text>
               </View>
 
               <Pressable
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     padding: 10,
     borderRadius: 12,
   },
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 50,
     right: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     padding: 10,
     borderRadius: 12,
   },
@@ -311,7 +313,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.medium,
   },
   primaryButtonText: {
-    color: "white",
+    color: COLORS.text,
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -419,7 +421,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: COLORS.bg3,
     justifyContent: "center",
     alignItems: "center",
     ...SHADOWS.small,
@@ -439,12 +441,12 @@ const styles = StyleSheet.create({
     marginTop: -5,
   },
   proportionBox: {
-    backgroundColor: "rgba(244, 162, 74, 0.1)",
+    backgroundColor: COLORS.primaryLight,
     padding: SPACING.m,
     borderRadius: RADIUS.m,
     marginVertical: SPACING.l,
     borderWidth: 1,
-    borderColor: "rgba(156, 90, 60, 0.1)",
+    borderColor: COLORS.border,
   },
   proportionText: {
     fontSize: 14,
@@ -468,9 +470,9 @@ const styles = StyleSheet.create({
     ...SHADOWS.small,
   },
   planBtn: {
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: COLORS.bg3,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: COLORS.border,
   },
   planBtnText: {
     color: COLORS.text,

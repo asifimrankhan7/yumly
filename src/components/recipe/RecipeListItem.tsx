@@ -43,12 +43,12 @@ export default function RecipeListItem({
               </Text>
               <View style={styles.stats}>
                 <View style={styles.statItem}>
-                  <Ionicons name="time-outline" size={14} color={COLORS.textLight} />
+                  <Ionicons name="time-outline" size={14} color={COLORS.textSecondary} />
                   <Text style={styles.statText}>{recipe.metadata.prepTimeMinutes} min</Text>
                 </View>
                 <View style={styles.dot} />
                 <View style={styles.statItem}>
-                  <Ionicons name="filter-outline" size={14} color={COLORS.textLight} />
+                  <Ionicons name="filter-outline" size={14} color={COLORS.textSecondary} />
                   <Text style={styles.statText}>{recipe.metadata.difficulty}</Text>
                 </View>
               </View>
@@ -65,7 +65,7 @@ export default function RecipeListItem({
               <Ionicons 
                 name={favorited ? "heart" : "heart-outline"} 
                 size={22} 
-                color={favorited ? "#FF3B30" : COLORS.textLight} 
+                color={favorited ? COLORS.error : COLORS.textSecondary} 
               />
             </Pressable>
           </View>
@@ -123,14 +123,14 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 13,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     marginLeft: 4,
   },
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: COLORS.textLight,
+    backgroundColor: COLORS.textSecondary,
     marginHorizontal: SPACING.s,
     opacity: 0.3,
   },

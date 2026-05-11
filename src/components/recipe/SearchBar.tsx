@@ -13,12 +13,24 @@ export default function SearchBar({ value, onChangeText }: SearchBarProps) {
     <View style={styles.container}>
       <Ionicons name="search-outline" size={20} color={COLORS.textLight} />
       <TextInput 
-        placeholder="Search over 100+ recipes"
+        placeholder="Search 200+ delicious recipes..."
         placeholderTextColor={COLORS.textLight}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
+        autoCapitalize="none"
+        autoCorrect={false}
       />
+      {value.length > 0 && (
+        <View style={styles.clearButton}>
+          <Ionicons 
+            name="close-circle" 
+            size={18} 
+            color={COLORS.textLight} 
+            onPress={() => onChangeText("")}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -27,7 +39,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: COLORS.bg3,
     marginHorizontal: SPACING.m,
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.s + 2,
@@ -39,5 +51,9 @@ const styles = StyleSheet.create({
     marginLeft: SPACING.s,
     fontSize: 14,
     color: COLORS.text,
+    paddingVertical: 8,
+  },
+  clearButton: {
+    padding: SPACING.xs,
   },
 });

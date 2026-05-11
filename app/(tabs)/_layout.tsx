@@ -16,12 +16,14 @@ export default function TabsLayout() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textLight,
         tabBarStyle: {
-          backgroundColor: COLORS.card,
+          backgroundColor: COLORS.background,
           borderTopWidth: 1,
           borderTopColor: COLORS.border,
           height: Platform.OS === "ios" ? 88 : 68,
           paddingBottom: Platform.OS === "ios" ? 30 : 10,
           paddingTop: 10,
+          elevation: 0, // Remove shadow on Android
+          shadowOpacity: 0, // Remove shadow on iOS
         },
       }}
     >

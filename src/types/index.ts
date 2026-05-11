@@ -22,7 +22,7 @@ export interface Recipe {
   metadata: {
     prepTimeMinutes: number;
     totalTimeMinutes: number;
-    difficulty: "Easy" | "Medium" | "Hard" | string;
+    difficulty: "Easy" | "Medium" | "Hard";
     calories: number;
     servings: number;
   };

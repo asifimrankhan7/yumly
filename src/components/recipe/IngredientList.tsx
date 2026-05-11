@@ -8,10 +8,11 @@ import { Ingredient } from "../../types";
 interface Props {
   ingredients: Ingredient[];
   initialServings: number;
+  currentServings?: number;
 }
 
-export default function IngredientList({ ingredients, initialServings }: Props) {
-  const [servings, setServings] = useState(initialServings);
+export default function IngredientList({ ingredients, initialServings, currentServings }: Props) {
+  const [servings, setServings] = useState(currentServings || initialServings);
 
   const scale = servings / initialServings;
 
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
   servingsControl: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: COLORS.bg3,
     borderRadius: RADIUS.m,
     padding: SPACING.xs,
   },
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.m,
   },
   iconContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: COLORS.bg3,
     padding: SPACING.s,
     borderRadius: RADIUS.s,
     marginRight: SPACING.s,

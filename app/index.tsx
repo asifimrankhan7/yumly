@@ -3,13 +3,13 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   Dimensions,
   StatusBar,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
@@ -19,8 +19,6 @@ import Animated, {
   withRepeat,
   withDelay,
   Easing,
-  interpolate,
-  withSpring,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, RADIUS, SPACING } from "../src/constants/theme";
@@ -29,19 +27,19 @@ const { width, height } = Dimensions.get("window");
 
 // --- Constants ---
 const THEME = {
-  bg: "#0a0a0b",
-  bg2: "#111114",
-  bg3: "#18181c",
+  bg: "#0E0E10",
+  bg2: "#1A1B1E",
+  bg3: "#27272A",
   accent: "#f4a24a",
   accent2: "#e8793a",
-  text: "#f0ede8",
-  text2: "#9a9690",
-  text3: "#5a5754",
+  text: "#F2F2F2",
+  text2: "#A1A1AA",
+  text3: "#71717A",
 };
 
 // --- Sub-components ---
 
-const FloatingOrb = ({ style, delay = 0 }: { style: any; delay?: number }) => {
+const FloatingOrb = ({ style, delay = 0 }: { style: object; delay?: number }) => {
   const floatX = useSharedValue(0);
   const floatY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -140,9 +138,9 @@ export default function OnboardingScreen() {
       {/* Background Orbs (Step 1 & 3) */}
       {(step === 1 || step === 3) && (
         <View style={StyleSheet.absoluteFill}>
-          <FloatingOrb style={{ ...styles.orb1, backgroundColor: "rgba(244,162,74,0.18)" }} />
-          <FloatingOrb style={{ ...styles.orb2, backgroundColor: "rgba(232,121,58,0.12)" }} delay={3000} />
-          <FloatingOrb style={{ ...styles.orb3, backgroundColor: "rgba(244,162,74,0.08)" }} delay={5000} />
+          <FloatingOrb style={{ ...styles.orb1, backgroundColor: "rgba(244,162,74,0.12)" }} />
+          <FloatingOrb style={{ ...styles.orb2, backgroundColor: "rgba(232,121,58,0.08)" }} delay={3000} />
+          <FloatingOrb style={{ ...styles.orb3, backgroundColor: "rgba(244,162,74,0.05)" }} delay={5000} />
           <View style={styles.particlesContainer}>
             {[...Array(15)].map((_, i) => (
               <Particle key={i} delay={i * 300} />
@@ -150,6 +148,15 @@ export default function OnboardingScreen() {
           </View>
         </View>
       )}
+
+      {/* Persistent Logo Area */}
+      <View style={styles.logoContainer}>
+        <Image 
+          source={require("../assets/images/LOGO1.png")} 
+          style={styles.logoImage} 
+          resizeMode="contain"
+        />
+      </View>
 
       <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
         {step === 1 && <StepOne onNext={handleNextStep} />}
@@ -186,13 +193,7 @@ const StepOne = ({ onNext }: { onNext: () => void }) => {
   return (
     <View style={styles.stepContent}>
       {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/images/logo.png")}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
-      </View>
+      {/* Logo moved to persistent wrapper */}
 
       {/* Hero */}
       <View style={styles.heroArea}>
@@ -252,11 +253,16 @@ const StepOne = ({ onNext }: { onNext: () => void }) => {
   );
 };
 
-const StepTwo = ({ name, setName, onNext, isLoading }: any) => {
+const StepTwo = ({ name, setName, onNext, isLoading }: {
+  name: string;
+  setName: (name: string) => void;
+  onNext: () => void;
+  isLoading: boolean;
+}) => {
   return (
     <View style={styles.stepContent}>
       <View style={styles.s2Top}>
-        <LinearGradient colors={["#1a1208", "#0f0a05"]} style={StyleSheet.absoluteFill} />
+        <LinearGradient colors={["#1A1B1E", "#0E0E10"]} style={StyleSheet.absoluteFill} />
         <View style={styles.welcomeIconWrap}>
           <View style={styles.welcomeBowl}>
             <Text style={{ fontSize: 48 }}>👨‍🍳</Text>
@@ -354,7 +360,7 @@ const StepThree = ({ name, onExplore }: { name: string; onExplore: () => void })
   );
 };
 
-const FeatureCard = ({ emoji, title, desc }: any) => (
+const FeatureCard = ({ emoji, title, desc }: { emoji: string; title: string; desc: string }) => (
   <View style={styles.featCard}>
     <Text style={styles.featEmoji}>{emoji}</Text>
     <Text style={styles.featTitle}>{title}</Text>
@@ -395,14 +401,17 @@ const styles = StyleSheet.create({
   // Step 1
   logoContainer: {
     position: "absolute",
-    top: 60,
+    top: Platform.OS === "ios" ? 50 : 40,
+    left: 0,
+    right: 0,
     alignItems: "center",
     justifyContent: "center",
+    height: 60,
+    zIndex: 10,
   },
   logoImage: {
-    width: 100,
-    height: 30,
-    tintColor: "#FFFFFF",
+    width: width * 0.45,
+    height: 50,
   },
   heroArea: {
     height: 400,
@@ -449,9 +458,9 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: "#1a1610",
+    backgroundColor: "#1A1B1E",
     borderWidth: 1.5,
-    borderColor: "rgba(244,162,74,0.2)",
+    borderColor: "rgba(244,162,74,0.15)",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: THEME.accent,
@@ -501,7 +510,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  mainBtnText: { color: "#1a0e04", fontSize: 16, fontWeight: "bold" },
+  mainBtnText: { color: "#FFFFFF", fontSize: 16, fontWeight: "bold" },
   btnArrow: {
     width: 24,
     height: 24,
@@ -521,9 +530,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#191008",
+    backgroundColor: "#1A1B1E",
     borderWidth: 1.5,
-    borderColor: "rgba(244,162,74,0.3)",
+    borderColor: "rgba(244,162,74,0.15)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -553,7 +562,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.bg3,
     borderWidth: 1.5,
-    borderColor: "rgba(255,255,255,0.07)",
+    borderColor: "rgba(0,0,0,0.08)",
     borderRadius: 16,
     padding: 16,
     color: THEME.text,
@@ -564,16 +573,16 @@ const styles = StyleSheet.create({
   continueBtn: { width: "100%", borderRadius: 18, overflow: "hidden" },
   btnDisabled: { opacity: 0.4 },
   loadingDots: { flexDirection: "row", gap: 5 },
-  loadingDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: "#1a0e04" },
+  loadingDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: "#FFFFFF" },
   // Step 3
   welcomeAnim: { marginBottom: 32, position: "relative" },
   wPlate: {
     width: 130,
     height: 130,
     borderRadius: 65,
-    backgroundColor: "#171007",
+    backgroundColor: "#1A1B1E",
     borderWidth: 2,
-    borderColor: "rgba(244,162,74,0.3)",
+    borderColor: "rgba(244,162,74,0.15)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -611,7 +620,7 @@ const styles = StyleSheet.create({
     width: (width - 64 - 12) / 2,
     backgroundColor: THEME.bg3,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.07)",
+    borderColor: "rgba(0,0,0,0.05)",
     borderRadius: 18,
     padding: 16,
   },

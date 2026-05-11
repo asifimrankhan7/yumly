@@ -40,7 +40,7 @@ export default function FavoritesScreen() {
         </ScrollView>
       ) : (
         <View style={styles.emptyState}>
-          <Ionicons name="heart-outline" size={80} color={COLORS.primary} opacity={0.2} />
+          <Ionicons name="heart-outline" size={80} color={COLORS.primary} style={{ opacity: 0.2 }} />
           <Text style={styles.title}>No Favorites Yet</Text>
           <Text style={styles.subtitle}>Recipes you favorite will appear here.</Text>
         </View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     textAlign: "center",
     marginTop: SPACING.s,
   },

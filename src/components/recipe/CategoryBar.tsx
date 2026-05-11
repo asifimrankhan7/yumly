@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m + 4,
     paddingVertical: SPACING.s + 2,
     borderRadius: RADIUS.xl,
-    backgroundColor: "rgba(255,255,255,0.08)", // Dark inactive pill
+    backgroundColor: COLORS.bg3, 
   },
   pillActive: {
-    backgroundColor: COLORS.primary, // Brown highlight
+    backgroundColor: COLORS.primary,
   },
   pillText: {
     fontSize: 14,
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
   },
   pillTextActive: {
-    color: "white",
+    color: COLORS.text,
   },
 });

@@ -3,7 +3,7 @@ import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
+import { COLORS, RADIUS, SPACING } from "../../constants/theme";
 
 const alertSound = require("../../../assets/sounds/alert.wav");
 const successSound = require("../../../assets/sounds/success.wav");
@@ -20,18 +20,18 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
   const [isActive, setIsActive] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const player = useAudioPlayer(alertSound, { downloadFirst: true });
-  const lastPlayedSource = useRef<any>(alertSound);
+  const lastPlayedSource = useRef(alertSound);
 
   const playSound = React.useCallback(
-    (source = alertSound) => {
+    async (source = alertSound) => {
       try {
         if (!player) return;
 
         if (lastPlayedSource.current === source && player.isLoaded) {
-          player.seekTo(0).catch(() => {});
+          await player.seekTo(0);
           player.play();
         } else {
-          player.replace(source);
+          await player.replace(source);
           player.play();
           lastPlayedSource.current = source;
         }
@@ -93,7 +93,7 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
           style={[styles.stepBadge, isCompleted && styles.stepBadgeCompleted]}
         >
           {isCompleted ? (
-            <Ionicons name="checkmark" size={14} color="white" />
+            <Ionicons name="checkmark" size={14} color={COLORS.text} />
           ) : (
             <Text style={styles.stepText}>{step}</Text>
           )}
@@ -136,7 +136,7 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
           <Ionicons
             name={isActive ? "stop-circle" : "timer-outline"}
             size={18}
-            color="white"
+            color={COLORS.text}
           />
           <Text style={styles.timerBtnText}>
             {isActive
@@ -159,9 +159,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   containerCompleted: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: COLORS.bg3,
     borderColor: COLORS.border,
-    opacity: 0.6,
+    opacity: 0.8,
   },
   header: {
     flexDirection: "row",
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.success,
   },
   stepText: {
-    color: "white",
+    color: COLORS.text,
     fontSize: 12,
     fontWeight: "bold",
   },

@@ -20,6 +20,7 @@ import CookingPot from "../../src/components/recipe/CookingPot";
 import { COLORS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useMealPlan } from "../../src/context/MealPlanContext";
 import recipesData from "../../src/data/recipes.json";
+import IngredientList from "../../src/components/recipe/IngredientList";
 import { Recipe } from "../../src/types";
 
 const recipes = recipesData as Recipe[];
@@ -29,34 +30,39 @@ const successSound = require("../../assets/sounds/success.wav");
 const startSound = require("../../assets/sounds/start.wav");
 
 export default function CookingScreen() {
-  const { id } = useLocalSearchParams();
+  const { id, servings: servingsParam } = useLocalSearchParams();
   const recipeId = Array.isArray(id) ? (id[0] ?? "") : (id ?? "");
   const router = useRouter();
   const { removeByRecipeId } = useMealPlan();
   const recipe = recipes.find((r) => r.id === recipeId);
+
+  const initialServings = recipe?.metadata.servings || 4;
+  const servings = servingsParam ? parseInt(Array.isArray(servingsParam) ? servingsParam[0] : servingsParam) : initialServings;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showIngredients, setShowIngredients] = useState(false);
 
   const oneShotPlayer = useAudioPlayer(alertSound, { downloadFirst: true });
-  const lastPlayedSource = useRef<any>(alertSound);
+  const lastPlayedSource = useRef(alertSound);
+  const timerStepRef = useRef<number | null>(null);
 
   const instructions = recipe?.instructions || [];
   const currentInstruction = instructions[currentStep];
 
   const playSound = React.useCallback(
-    (source = alertSound) => {
+    async (source = alertSound) => {
       try {
         if (!oneShotPlayer) return;
 
         if (lastPlayedSource.current === source && oneShotPlayer.isLoaded) {
-          oneShotPlayer.seekTo(0);
+          await oneShotPlayer.seekTo(0);
           oneShotPlayer.play();
         } else {
-          oneShotPlayer.replace(source);
+          await oneShotPlayer.replace(source);
           oneShotPlayer.play();
           lastPlayedSource.current = source;
         }
@@ -124,9 +130,11 @@ export default function CookingScreen() {
     if (currentInstruction?.timerSeconds) {
       setTimeLeft(currentInstruction.timerSeconds);
       setIsTimerActive(false);
+      timerStepRef.current = currentStep;
     } else {
       setTimeLeft(0);
       setIsTimerActive(false);
+      timerStepRef.current = null;
     }
   }, [currentStep, currentInstruction?.timerSeconds]);
 
@@ -163,7 +171,8 @@ export default function CookingScreen() {
   // Handle timer completion (haptics and completion sound)
   const prevTimeLeft = useRef(timeLeft);
   useEffect(() => {
-    if (prevTimeLeft.current > 0 && timeLeft === 0 && !isTimerActive) {
+    const hadTimer = timerStepRef.current !== null;
+    if (hadTimer && prevTimeLeft.current > 0 && timeLeft === 0 && !isTimerActive) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       playSound(alertSound);
 
@@ -224,7 +233,16 @@ export default function CookingScreen() {
             />
           </View>
         </View>
-        <View style={styles.placeholder} />
+        <Pressable 
+          style={styles.ingredientsBtn}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setShowIngredients(true);
+          }}
+        >
+          <Ionicons name="list" size={20} color={COLORS.primary} />
+          <Text style={styles.ingredientsBtnText}>Ingredients</Text>
+        </Pressable>
       </View>
 
       <View style={styles.mainContent}>
@@ -248,7 +266,7 @@ export default function CookingScreen() {
                 <Ionicons
                   name={isSpeaking ? "volume-high" : "volume-medium-outline"}
                   size={24}
-                  color={isSpeaking ? COLORS.primary : COLORS.textLight}
+                  color={isSpeaking ? COLORS.primary : COLORS.textSecondary}
                 />
               </Pressable>
             </View>
@@ -257,7 +275,7 @@ export default function CookingScreen() {
             </Text>
           </Animated.View>
 
-          {currentInstruction.timerSeconds ? (
+          {currentInstruction?.timerSeconds ? (
             <View style={styles.timerSection}>
               <CookingPot
                 isActive={isTimerActive}
@@ -313,7 +331,7 @@ export default function CookingScreen() {
             <Ionicons
               name="chevron-back"
               size={20}
-              color={currentStep === 0 ? COLORS.textLight : COLORS.text}
+              color={currentStep === 0 ? COLORS.textSecondary : COLORS.text}
             />
             <Text
               style={[
@@ -335,6 +353,32 @@ export default function CookingScreen() {
           </Pressable>
         </View>
       </View>
+
+      {/* Ingredients Modal */}
+      <Modal 
+        animationType="slide" 
+        transparent={true} 
+        visible={showIngredients}
+        onRequestClose={() => setShowIngredients(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Ingredients</Text>
+              <Pressable onPress={() => setShowIngredients(false)}>
+                <Ionicons name="close" size={24} color={COLORS.text} />
+              </Pressable>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <IngredientList 
+                ingredients={recipe.ingredients} 
+                initialServings={initialServings} 
+                currentServings={servings}
+              />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Success Celebration Modal */}
       <Modal animationType="fade" transparent={true} visible={showSuccess}>
@@ -417,14 +461,14 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     marginBottom: 4,
     letterSpacing: 0.5,
   },
   progressBar: {
     width: 100,
     height: 4,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: COLORS.bg3,
     borderRadius: 2,
     overflow: "hidden",
   },
@@ -432,8 +476,45 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: COLORS.primary,
   },
+  ingredientsBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.bg3,
+    paddingHorizontal: SPACING.s,
+    paddingVertical: SPACING.xs,
+    borderRadius: RADIUS.s,
+    gap: 4,
+  },
+  ingredientsBtnText: {
+    color: COLORS.primary,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
   placeholder: {
     width: 40,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: COLORS.card,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    padding: SPACING.l,
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: SPACING.m,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: COLORS.text,
   },
   instructionCard: {
     backgroundColor: COLORS.card,
@@ -452,7 +533,7 @@ const styles = StyleSheet.create({
   speakerBtn: {
     padding: SPACING.xs,
     borderRadius: RADIUS.s,
-    backgroundColor: "rgba(255,107,53,0.1)",
+    backgroundColor: COLORS.primaryLight,
   },
   instructionTitle: {
     fontSize: 12,
@@ -476,7 +557,7 @@ const styles = StyleSheet.create({
   timerToggle: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.text,
+    backgroundColor: COLORS.bg3,
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.s + 4,
     borderRadius: RADIUS.m,
@@ -486,7 +567,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   timerToggleText: {
-    color: "white",
+    color: COLORS.text,
     fontWeight: "bold",
     fontSize: 16,
     marginLeft: SPACING.s,
@@ -499,7 +580,7 @@ const styles = StyleSheet.create({
   },
   noTimerText: {
     textAlign: "center",
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     fontSize: 14,
     paddingHorizontal: SPACING.xl,
     lineHeight: 20,
@@ -530,7 +611,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   navBtnTextDisabled: {
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
   },
   nextBtn: {
     flexDirection: "row",
@@ -544,14 +625,14 @@ const styles = StyleSheet.create({
     ...SHADOWS.small,
   },
   nextBtnText: {
-    color: "white",
+    color: COLORS.text,
     fontSize: 15,
     fontWeight: "800",
     marginRight: 4,
   },
   successOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "center",
     alignItems: "center",
     padding: SPACING.xl,
@@ -582,7 +663,7 @@ const styles = StyleSheet.create({
   },
   successSubtitle: {
     fontSize: 16,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     textAlign: "center",
     lineHeight: 24,
     marginBottom: SPACING.xl,

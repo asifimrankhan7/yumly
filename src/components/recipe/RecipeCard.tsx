@@ -19,7 +19,7 @@ export type RecipeSummary = Pick<Recipe, "id" | "title" | "isVeg"> & {
 };
 
 const VegIndicator = ({ isVeg }: { isVeg: boolean }) => {
-  const color = isVeg ? "#24963F" : "#AF3333";
+  const color = isVeg ? COLORS.veg : COLORS.nonVeg;
   return (
     <View style={[styles.vegContainer, { borderColor: color }]}>
        <View style={[styles.vegDot, { backgroundColor: color }]} />
@@ -63,7 +63,7 @@ const RecipeCard = React.memo(({
               <Ionicons 
                 name={favorited ? "heart" : "heart-outline"} 
                 size={22} 
-                color={favorited ? "#FF3B30" : "white"} 
+                color={favorited ? COLORS.error : COLORS.text} 
               />
             </Pressable>
           </View>
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     left: SPACING.s,
     width: 12,
     height: 12,
-    backgroundColor: "black",
+    backgroundColor: COLORS.card,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",

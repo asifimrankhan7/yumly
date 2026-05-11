@@ -33,11 +33,23 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const filteredRecipes = recipes.filter((recipe) => {
-    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || recipe.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredRecipes = React.useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const queryTerms = query.split(/\s+/).filter(term => term.length > 0);
+
+    return recipes.filter((recipe) => {
+      const matchesCategory = selectedCategory === "All" || recipe.category === selectedCategory;
+      if (!matchesCategory) return false;
+
+      if (queryTerms.length === 0) return true;
+
+      const title = recipe.title.toLowerCase();
+      const category = recipe.category.toLowerCase();
+      
+      // Check if all search terms appear in the title or category
+      return queryTerms.every(term => title.includes(term) || category.includes(term));
+    });
+  }, [searchQuery, selectedCategory]);
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
@@ -45,9 +57,9 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
           <View style={styles.logoContainer}>
-            <Image
-              source={require("../../assets/images/logo.png")}
-              style={styles.logoImage}
+            <Image 
+              source={require("../../assets/images/LOGO1.png")} 
+              style={styles.logoImage} 
               resizeMode="contain"
             />
           </View>
@@ -72,7 +84,7 @@ export default function HomeScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="search-outline" size={50} color={COLORS.textLight} opacity={0.3} />
+      <Ionicons name="search-outline" size={50} color={COLORS.textLight} style={{ opacity: 0.3 }} />
       <Text style={styles.emptyText}>No recipes found in this category.</Text>
     </View>
   );
@@ -124,16 +136,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: SPACING.l,
+    marginBottom: SPACING.m,
   },
   logoContainer: {
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
+    height: 40,
   },
   logoImage: {
-    width: 100,
-    height: 30,
-    tintColor: COLORS.text,
+    width: 120,
+    height: 40,
   },
   headerRight: {
     flexDirection: "row",

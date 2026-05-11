@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, Pressable } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { SPACING, RADIUS } from '../../constants/theme';
+import { COLORS, SPACING, RADIUS } from '../../constants/theme';
 import * as Haptics from 'expo-haptics';
 
 interface SwipeableRowProps {
@@ -33,7 +33,7 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
         }}
       >
         <Animated.View style={[styles.actionIcon, { transform: [{ scale }] }]}>
-          <Ionicons name="trash-outline" size={28} color="white" />
+          <Ionicons name="trash-outline" size={28} color={COLORS.text} />
           <Text style={styles.actionText}>Remove</Text>
         </Animated.View>
       </Pressable>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   rightAction: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: COLORS.error,
     justifyContent: 'center',
     alignItems: 'flex-end',
     width: 100,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     paddingRight: SPACING.m,
   },
   actionText: {
-    color: 'white',
+    color: COLORS.text,
     fontSize: 12,
     fontWeight: 'bold',
     marginTop: 4,

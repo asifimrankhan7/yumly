@@ -53,7 +53,9 @@ export default function MealPlanScreen() {
                       <Text style={styles.mealTitle} numberOfLines={1}>{recipe.title}</Text>
                       <View style={styles.servingsRow}>
                         <Ionicons name="people" size={14} color={COLORS.primary} />
-                        <Text style={styles.servingsText}>{meal.servings} Members</Text>
+                        <Text style={styles.servingsText}>
+                          {meal.servings} {meal.servings === 1 ? "Member" : "Members"}
+                        </Text>
                       </View>
                       <View style={styles.proportionTag}>
                         <Text style={styles.proportionText}>
@@ -69,7 +71,7 @@ export default function MealPlanScreen() {
                         removeFromMealPlan(meal.id);
                       }}
                     >
-                      <Ionicons name="close-circle" size={24} color={COLORS.textLight} opacity={0.5} />
+                      <Ionicons name="close-circle" size={24} color={COLORS.textSecondary} style={{ opacity: 0.5 }} />
                     </Pressable>
                   </Pressable>
                 </Link>
@@ -86,7 +88,7 @@ export default function MealPlanScreen() {
                       });
                     }}
                   >
-                    <Ionicons name="play" size={16} color="white" />
+                    <Ionicons name="play" size={16} color={COLORS.text} />
                     <Text style={styles.startCookingText}>Start Cooking</Text>
                   </Pressable>
                 </View>
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 12,
     fontWeight: "800",
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     letterSpacing: 1.5,
     marginBottom: SPACING.m,
     paddingHorizontal: SPACING.m,
@@ -168,11 +170,11 @@ const styles = StyleSheet.create({
   },
   servingsText: {
     fontSize: 13,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     marginLeft: 6,
   },
   proportionTag: {
-    backgroundColor: "rgba(244, 162, 74, 0.1)",
+    backgroundColor: COLORS.primaryLight,
     paddingHorizontal: SPACING.s,
     paddingVertical: 2,
     borderRadius: 4,
@@ -200,7 +202,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.small,
   },
   startCookingText: {
-    color: "white",
+    color: COLORS.text,
     fontSize: 14,
     fontWeight: "bold",
     marginLeft: 6,
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
     textAlign: "center",
     marginTop: SPACING.s,
     lineHeight: 24,
