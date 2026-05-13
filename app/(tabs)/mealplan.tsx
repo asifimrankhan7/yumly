@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, SPACING, RADIUS, SHADOWS } from "../../src/constants/theme";
+import { COLORS, SPACING, RADIUS, SHADOWS, FONTS } from "../../src/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useMealPlan } from "../../src/context/MealPlanContext";
 import { Recipe } from "../../src/types";
@@ -10,8 +10,9 @@ import { Image } from "expo-image";
 import { RecipeImages } from "../../src/constants/recipe-images";
 import { Link, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeInRight } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInRight, FadeInDown } from "react-native-reanimated";
 import EmptyState from "../../src/components/common/EmptyState";
+import { LinearGradient } from "expo-linear-gradient";
 
 const recipes = recipesData as Recipe[];
 
@@ -19,78 +20,151 @@ export default function MealPlanScreen() {
   const { meals, removeFromMealPlan } = useMealPlan();
   const router = useRouter();
 
-  const getRecipeById = (id: string) => recipes.find(r => r.id === id);
+  const getRecipeById = (id: string) => recipes.find((r) => r.id === id);
+
+  const totalCalories = meals.reduce((sum, meal) => {
+    const recipe = getRecipeById(meal.recipeId);
+    if (!recipe) return sum;
+    const scale = meal.servings / recipe.metadata.servings;
+    return sum + recipe.metadata.calories * scale;
+  }, 0);
+
+  const totalTime = meals.reduce((sum, meal) => {
+    const recipe = getRecipeById(meal.recipeId);
+    return sum + (recipe?.metadata.totalTimeMinutes || 0);
+  }, 0);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Meal Plan</Text>
-      </View>
+      <Animated.View
+        entering={FadeIn.duration(500)}
+        style={styles.header}
+      >
+        <View>
+          <Text style={styles.headerLabel}>YOUR KITCHEN</Text>
+          <Text style={styles.headerTitle}>Meal Plan</Text>
+        </View>
+      </Animated.View>
 
       {meals.length > 0 ? (
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
+          {/* Quick Stats */}
+          <Animated.View
+            entering={FadeInDown.delay(100).duration(500)}
+            style={styles.statsRow}
+          >
+            <View style={styles.statCard}>
+              <View style={styles.statIconWrap}>
+                <Ionicons name="flame-outline" size={18} color={COLORS.primary} />
+              </View>
+              <Text style={styles.statValue}>{meals.length}</Text>
+              <Text style={styles.statLabel}>Recipes</Text>
+            </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconWrap}>
+                <Ionicons name="nutrition-outline" size={18} color={COLORS.secondary} />
+              </View>
+              <Text style={styles.statValue}>{Math.round(totalCalories)}</Text>
+              <Text style={styles.statLabel}>Total Cal</Text>
+            </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconWrap}>
+                <Ionicons name="time-outline" size={18} color={COLORS.accentCool} />
+              </View>
+              <Text style={styles.statValue}>{totalTime}m</Text>
+              <Text style={styles.statLabel}>Cook Time</Text>
+            </View>
+          </Animated.View>
+
           <Text style={styles.sectionSubtitle}>UPCOMING MEALS</Text>
+          
           {meals.map((meal, index) => {
             const recipe = getRecipeById(meal.recipeId);
             if (!recipe) return null;
 
             return (
-              <Animated.View 
-                key={meal.id} 
-                entering={FadeInRight.delay(index * 100)}
+              <Animated.View
+                key={meal.id}
+                entering={FadeInRight.delay(200 + index * 80).duration(500)}
                 style={styles.mealCard}
               >
                 <Link href={`/recipe/${meal.recipeId}`} asChild>
                   <Pressable style={styles.mealInner}>
-                    <Image
-                      source={RecipeImages[meal.recipeId]}
-                      style={styles.mealImage}
-                      contentFit="cover"
-                    />
+                    {/* Image with subtle gradient */}
+                    <View style={styles.mealImageWrap}>
+                      <Image
+                        source={RecipeImages[meal.recipeId]}
+                        style={styles.mealImage}
+                        contentFit="cover"
+                      />
+                    </View>
+
                     <View style={styles.mealInfo}>
-                      <Text style={styles.mealTitle} numberOfLines={1}>{recipe.title}</Text>
-                      <View style={styles.servingsRow}>
-                        <Ionicons name="people" size={14} color={COLORS.primary} />
-                        <Text style={styles.servingsText}>
-                          {meal.servings} {meal.servings === 1 ? "Member" : "Members"}
-                        </Text>
-                      </View>
-                      <View style={styles.proportionTag}>
-                        <Text style={styles.proportionText}>
-                          x{(meal.servings / recipe.metadata.servings).toFixed(1)} Proportion
-                        </Text>
+                      <Text style={styles.mealTitle} numberOfLines={1}>
+                        {recipe.title}
+                      </Text>
+                      <View style={styles.mealMeta}>
+                        <View style={styles.metaChip}>
+                          <Ionicons
+                            name="people"
+                            size={12}
+                            color={COLORS.primary}
+                          />
+                          <Text style={styles.metaChipText}>
+                            {meal.servings}{" "}
+                            {meal.servings === 1 ? "person" : "people"}
+                          </Text>
+                        </View>
+                        <View style={styles.proportionChip}>
+                          <Text style={styles.proportionText}>
+                            ×{(meal.servings / recipe.metadata.servings).toFixed(1)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                    <Pressable 
+
+                    <Pressable
                       style={styles.removeBtn}
                       onPress={(e) => {
                         e.stopPropagation();
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         removeFromMealPlan(meal.id);
                       }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
-                      <Ionicons name="close-circle" size={24} color={COLORS.textSecondary} style={{ opacity: 0.5 }} />
+                      <Ionicons
+                        name="close"
+                        size={16}
+                        color={COLORS.textMuted}
+                      />
                     </Pressable>
                   </Pressable>
                 </Link>
-                
-                {/* Actions Section - Explicitly outside the detail link */}
+
+                {/* Cook Button */}
                 <View style={styles.cardActions}>
-                  <Pressable 
+                  <Pressable
                     style={styles.startCookingBtn}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       router.push({
                         pathname: `/cooking/${meal.recipeId}`,
-                        params: { servings: meal.servings }
+                        params: { servings: meal.servings },
                       });
                     }}
                   >
-                    <Ionicons name="play" size={16} color={COLORS.text} />
-                    <Text style={styles.startCookingText}>Start Cooking</Text>
+                    <LinearGradient
+                      colors={[COLORS.primary, COLORS.primaryDark]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.cookBtnGradient}
+                    >
+                      <Ionicons name="play" size={14} color="#1A0E04" />
+                      <Text style={styles.startCookingText}>Start Cooking</Text>
+                    </LinearGradient>
                   </Pressable>
                 </View>
               </Animated.View>
@@ -99,10 +173,10 @@ export default function MealPlanScreen() {
           <View style={styles.footerSpacer} />
         </ScrollView>
       ) : (
-        <EmptyState 
-          icon="restaurant-outline"
-          title="Your Plan is Empty"
-          description="Choose a recipe and add it to your daily plan to start your cooking journey."
+        <EmptyState
+          icon="flame-outline"
+          title="Your Kitchen is Empty"
+          description="Browse recipes and add them to your meal plan to start your culinary adventure."
           actionLabel="Find Recipes"
           onAction={() => router.push("/(tabs)")}
         />
@@ -120,124 +194,168 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.m,
   },
+  headerLabel: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.primary,
+    letterSpacing: 2,
+    marginBottom: 4,
+    fontFamily: FONTS.mono,
+  },
   headerTitle: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: COLORS.text,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    fontWeight: "800",
-    color: COLORS.textSecondary,
-    letterSpacing: 1.5,
-    marginBottom: SPACING.m,
-    paddingHorizontal: SPACING.m,
+    fontFamily: FONTS.serif,
   },
   scrollContent: {
     paddingTop: SPACING.s,
   },
+  // Stats
+  statsRow: {
+    flexDirection: "row",
+    paddingHorizontal: SPACING.m,
+    gap: SPACING.s,
+    marginBottom: SPACING.l,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.l,
+    padding: SPACING.m,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  statIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: COLORS.elevated,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: SPACING.s,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: COLORS.text,
+    fontFamily: FONTS.mono,
+  },
+  statLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: COLORS.textMuted,
+    marginTop: 2,
+    letterSpacing: 0.3,
+  },
+  sectionSubtitle: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.textMuted,
+    letterSpacing: 2,
+    marginBottom: SPACING.m,
+    paddingHorizontal: SPACING.m,
+    fontFamily: FONTS.mono,
+  },
+  // Meal cards
   mealCard: {
     marginHorizontal: SPACING.m,
     marginBottom: SPACING.m,
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
-    ...SHADOWS.small,
     overflow: "hidden",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.small,
   },
   mealInner: {
     flexDirection: "row",
     alignItems: "center",
-    padding: SPACING.s,
+    padding: SPACING.s + 2,
+  },
+  mealImageWrap: {
+    width: 70,
+    height: 70,
+    borderRadius: RADIUS.m,
+    overflow: "hidden",
   },
   mealImage: {
-    width: 80,
-    height: 80,
-    borderRadius: RADIUS.m,
+    width: "100%",
+    height: "100%",
   },
   mealInfo: {
     flex: 1,
     paddingHorizontal: SPACING.m,
   },
   mealTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontWeight: "700",
     color: COLORS.text,
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: -0.2,
   },
-  servingsRow: {
+  mealMeta: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
+    gap: SPACING.s,
   },
-  servingsText: {
-    fontSize: 13,
+  metaChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  metaChipText: {
+    fontSize: 11,
     color: COLORS.textSecondary,
-    marginLeft: 6,
+    fontWeight: "500",
   },
-  proportionTag: {
+  proportionChip: {
     backgroundColor: COLORS.primaryLight,
-    paddingHorizontal: SPACING.s,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: "flex-start",
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.borderAccent,
   },
   proportionText: {
     fontSize: 10,
-    fontWeight: "bold",
+    fontWeight: "800",
     color: COLORS.primary,
+    fontFamily: FONTS.mono,
   },
   removeBtn: {
-    padding: SPACING.s,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: COLORS.elevated,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   cardActions: {
-    paddingHorizontal: SPACING.m,
-    paddingBottom: SPACING.m,
+    paddingHorizontal: SPACING.s + 2,
+    paddingBottom: SPACING.s + 2,
   },
   startCookingBtn: {
-    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.m,
+    overflow: "hidden",
+  },
+  cookBtnGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: SPACING.s,
-    borderRadius: RADIUS.m,
-    ...SHADOWS.small,
+    paddingVertical: SPACING.s + 2,
+    gap: 6,
   },
   startCookingText: {
-    color: COLORS.text,
-    fontSize: 14,
-    fontWeight: "bold",
-    marginLeft: 6,
+    color: "#1A0E04",
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 0.3,
   },
   footerSpacer: {
-    height: 100,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: SPACING.xl,
-    marginTop: -100,
-  },
-  iconCircle: {
-    width: 120,
     height: 120,
-    borderRadius: 60,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: SPACING.m,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.text,
-    marginTop: SPACING.m,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    textAlign: "center",
-    marginTop: SPACING.s,
-    lineHeight: 24,
   },
 });

@@ -4,8 +4,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 interface UserContextType {
   name: string;
   onboardingComplete: boolean;
+  recipesCooked: number;
   setName: (name: string) => void;
   setOnboardingComplete: (complete: boolean) => void;
+  incrementRecipesCooked: () => void;
   isLoading: boolean;
 }
 
@@ -14,6 +16,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [name, setNameState] = useState<string>("");
   const [onboardingComplete, setOnboardingCompleteState] = useState<boolean>(false);
+  const [recipesCooked, setRecipesCookedState] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -21,9 +24,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const savedName = await AsyncStorage.getItem("user_name");
         const savedOnboarding = await AsyncStorage.getItem("onboarding_complete");
+        const savedRecipesCooked = await AsyncStorage.getItem("recipes_cooked");
 
         if (savedName) setNameState(savedName);
         if (savedOnboarding) setOnboardingCompleteState(savedOnboarding === "true");
+        if (savedRecipesCooked) setRecipesCookedState(parseInt(savedRecipesCooked, 10));
       } catch (error) {
         console.error("Error loading user data:", error);
       } finally {
@@ -52,13 +57,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const incrementRecipesCooked = async () => {
+    const newVal = recipesCooked + 1;
+    setRecipesCookedState(newVal);
+    try {
+      await AsyncStorage.setItem("recipes_cooked", newVal.toString());
+    } catch (error) {
+      console.error("Error saving recipes cooked count:", error);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         name,
         onboardingComplete,
+        recipesCooked,
         setName,
         setOnboardingComplete,
+        incrementRecipesCooked,
         isLoading,
       }}
     >

@@ -1,24 +1,28 @@
-import React, { useState } from "react";
-import { 
+import React, { useState, useMemo } from "react";
+import {
   FlatList,
   Image,
-  StyleSheet, 
-  Text, 
-  View, 
+  StyleSheet,
+  Text,
+  View,
   StatusBar,
-  TouchableOpacity
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, SPACING } from "../../src/constants/theme";
+import { COLORS, SPACING, FONTS, RADIUS } from "../../src/constants/theme";
 import SearchBar from "../../src/components/recipe/SearchBar";
 import RecipeCard from "../../src/components/recipe/RecipeCard";
 import CategoryBar from "../../src/components/recipe/CategoryBar";
+import FeaturedCarousel from "../../src/components/recipe/FeaturedCarousel";
 import { Recipe } from "../../src/types";
 import recipesData from "../../src/data/recipes.json";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "../../src/context/UserContext";
 import EmptyState from "../../src/components/common/EmptyState";
 import { useDebounce } from "../../src/hooks/useDebounce";
+import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 const recipes = recipesData as Recipe[];
 
@@ -33,67 +37,247 @@ const CATEGORIES = [
   "Chinese",
 ];
 
+const getTimeGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 6) return { text: "Night owl?", emoji: "🌙" };
+  if (hour < 12) return { text: "Good morning", emoji: "☀️" };
+  if (hour < 17) return { text: "Good afternoon", emoji: "🌤️" };
+  if (hour < 21) return { text: "Good evening", emoji: "🌅" };
+  return { text: "Late night cravings?", emoji: "🌙" };
+};
+
+const getChefRank = (count: number) => {
+  if (count >= 31) return { title: "Master Chef", icon: "🌟" };
+  if (count >= 16) return { title: "Head Chef", icon: "👨‍🍳" };
+  if (count >= 6) return { title: "Sous Chef", icon: "🔪" };
+  return { title: "Novice Chef", icon: "🍳" };
+};
+
 export default function HomeScreen() {
-  const { name } = useUser();
+  const { name, recipesCooked } = useUser();
+  const rank = getChefRank(recipesCooked);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const filteredRecipes = React.useMemo(() => {
+  useEffect(() => {
+    const loadRecentSearches = async () => {
+      try {
+        const saved = await AsyncStorage.getItem("recent_searches");
+        if (saved) setRecentSearches(JSON.parse(saved));
+      } catch (e) {
+        console.warn("Failed to load recent searches", e);
+      }
+    };
+    loadRecentSearches();
+  }, []);
+
+  const addToRecentSearches = async (query: string) => {
+    const cleanQuery = query.trim();
+    if (!cleanQuery) return;
+    
+    const updated = [cleanQuery, ...recentSearches.filter(s => s !== cleanQuery)].slice(0, 5);
+    setRecentSearches(updated);
+    try {
+      await AsyncStorage.setItem("recent_searches", JSON.stringify(updated));
+    } catch (e) {
+      console.warn("Failed to save recent searches", e);
+    }
+  };
+
+  const removeRecentSearch = async (query: string) => {
+    const updated = recentSearches.filter(s => s !== query);
+    setRecentSearches(updated);
+    try {
+      await AsyncStorage.setItem("recent_searches", JSON.stringify(updated));
+    } catch (e) {
+      console.warn("Failed to save recent searches", e);
+    }
+  };
+
+  const greeting = getTimeGreeting();
+
+  const filteredRecipes = useMemo(() => {
     const query = debouncedSearchQuery.trim().toLowerCase();
-    const queryTerms = query.split(/\s+/).filter(term => term.length > 0);
+    const queryTerms = query.split(/\s+/).filter((term) => term.length > 0);
 
     return recipes.filter((recipe) => {
-      const matchesCategory = selectedCategory === "All" || recipe.category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === "All" || recipe.category === selectedCategory;
       if (!matchesCategory) return false;
 
       if (queryTerms.length === 0) return true;
 
       const title = recipe.title.toLowerCase();
       const category = recipe.category.toLowerCase();
-      
+
       // Check if all search terms appear in the title or category
-      return queryTerms.every(term => title.includes(term) || category.includes(term));
+      return queryTerms.every(
+        (term) => title.includes(term) || category.includes(term)
+      );
     });
   }, [debouncedSearchQuery, selectedCategory]);
+
+  // Featured recipes (first 5 from different categories)
+  const featuredRecipes = useMemo(() => {
+    const seen = new Set<string>();
+    return recipes.filter((r) => {
+      if (seen.has(r.category)) return false;
+      seen.add(r.category);
+      return true;
+    }).slice(0, 5);
+  }, []);
+
+  const quickRecipes = useMemo(() => {
+    return recipes.filter((r) => r.metadata.totalTimeMinutes <= 30).slice(0, 10);
+  }, []);
+
+  const isSearching = debouncedSearchQuery.trim().length > 0;
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
       {/* Header */}
-      <View style={styles.header}>
+      <Animated.View
+        entering={FadeIn.duration(600)}
+        style={styles.header}
+      >
         <View style={styles.headerTitleRow}>
           <View style={styles.logoContainer}>
-            <Image 
-              source={require("../../assets/images/LOGO1.png")} 
-              style={styles.logoImage} 
+            <Image
+              source={require("../../assets/images/LOGO1.png")}
+              style={styles.logoImage}
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={styles.profileBtn}>
-             <Text style={styles.profileEmoji}>👨‍🍳</Text>
-          </TouchableOpacity>
+          <View style={styles.headerRight}>
+            <View style={styles.rankBadge}>
+              <Text style={styles.rankText}>{rank.title.toUpperCase()}</Text>
+            </View>
+            <Pressable style={styles.profileBtn}>
+              <Text style={styles.profileEmoji}>{rank.icon}</Text>
+            </Pressable>
+          </View>
         </View>
-        
-        <View style={styles.greetingSection}>
-          <Text style={styles.greeting}>Hello, {name || "Chef"}!</Text>
-          <Text style={styles.subGreeting}>Discover Your Next{"\n"}Favorite Recipe</Text>
-        </View>
-      </View>
+
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(500)}
+          style={styles.greetingSection}
+        >
+          <View style={styles.greetingRow}>
+            <Text style={styles.greetingEmoji}>{greeting.emoji}</Text>
+            <Text style={styles.greeting}>
+              {greeting.text}, {name || "Chef"}
+            </Text>
+          </View>
+          <Text style={styles.subGreeting}>
+            What would you{"\n"}like to cook?
+          </Text>
+        </Animated.View>
+      </Animated.View>
 
       {/* Search Bar */}
-      <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+      <SearchBar 
+        value={searchQuery} 
+        onChangeText={setSearchQuery} 
+        onFocus={() => setIsSearchFocused(true)}
+        onBlur={() => setIsSearchFocused(false)}
+        onSubmitEditing={() => addToRecentSearches(searchQuery)}
+      />
+
+      {/* Featured Carousel - only show when not searching */}
+      {!isSearching && !isSearchFocused && selectedCategory === "All" && (
+        <FeaturedCarousel recipes={featuredRecipes} />
+      )}
+
+      {/* Quick Recipes Section */}
+      {!isSearching && !isSearchFocused && selectedCategory === "All" && (
+        <View style={styles.quickSection}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionLabel}>QUICK BITES</Text>
+            <Text style={styles.sectionValue}>UNDER 30 MINS</Text>
+          </View>
+          <FlatList
+            data={quickRecipes}
+            keyExtractor={(item) => `quick-${item.id}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickList}
+            renderItem={({ item, index }) => (
+              <Animated.View entering={FadeInDown.delay(index * 100)}>
+                <RecipeCard 
+                  recipe={item} 
+                  index={index} 
+                  horizontal 
+                  containerStyle={styles.quickCard} 
+                />
+              </Animated.View>
+            )}
+          />
+        </View>
+      )}
 
       {/* Categories Bar */}
-      <CategoryBar 
-        categories={CATEGORIES}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-      />
+      <View style={styles.categoriesSection}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionLabel}>BROWSE</Text>
+          <Text style={styles.recipeCount}>
+            {filteredRecipes.length} recipes
+          </Text>
+        </View>
+        <CategoryBar
+          categories={CATEGORIES}
+          selectedCategory={selectedCategory}
+          onSelectCategory={(cat) => {
+            setSelectedCategory(cat);
+            if (cat !== "All") setSearchQuery("");
+          }}
+        />
+      </View>
+
+      {/* Recent Searches */}
+      {isSearchFocused && searchQuery.length === 0 && recentSearches.length > 0 && (
+        <Animated.View 
+          entering={FadeIn.duration(300)} 
+          exiting={FadeOut.duration(200)}
+          style={styles.recentSearches}
+        >
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionLabel}>RECENT SEARCHES</Text>
+            <Pressable onPress={() => {
+              setRecentSearches([]);
+              AsyncStorage.removeItem("recent_searches");
+            }}>
+              <Text style={styles.clearAllText}>Clear All</Text>
+            </Pressable>
+          </View>
+          <View style={styles.recentChips}>
+            {recentSearches.map((query) => (
+              <View key={query} style={styles.recentChip}>
+                <Pressable 
+                  style={styles.recentChipContent}
+                  onPress={() => setSearchQuery(query)}
+                >
+                  <Ionicons name="time-outline" size={14} color={COLORS.textMuted} />
+                  <Text style={styles.recentText}>{query}</Text>
+                </Pressable>
+                <Pressable 
+                  onPress={() => removeRecentSearch(query)}
+                  style={styles.removeRecent}
+                >
+                  <Ionicons name="close" size={14} color={COLORS.textMuted} />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 
   const renderEmpty = () => (
-    <EmptyState 
+    <EmptyState
       icon="search-outline"
       title="No Recipes Found"
       description={`We couldn't find any recipes matching "${searchQuery}" in ${selectedCategory === "All" ? "any category" : selectedCategory}.`}
@@ -131,10 +315,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   listContent: {
-    paddingTop: SPACING.m,
+    paddingTop: SPACING.s,
   },
   headerContent: {
-    marginBottom: SPACING.m,
+    marginBottom: SPACING.s,
   },
   columnWrapper: {
     paddingHorizontal: SPACING.m,
@@ -158,30 +342,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
   },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  greetingSection: {
-    marginTop: SPACING.s,
-  },
-  greeting: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.primary,
-    marginBottom: 4,
-  },
-  subGreeting: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: COLORS.text,
-    lineHeight: 38,
-  },
   profileBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.bg3,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: COLORS.elevated,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -190,26 +355,135 @@ const styles = StyleSheet.create({
   profileEmoji: {
     fontSize: 20,
   },
-  grid: {
+  headerRight: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 12,
+  },
+  rankBadge: {
+    backgroundColor: COLORS.primaryLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: COLORS.borderAccent,
+  },
+  rankText: {
+    fontSize: 9,
+    fontWeight: "900",
+    color: COLORS.primary,
+    fontFamily: FONTS.mono,
+    letterSpacing: 0.5,
+  },
+  quickSection: {
+    marginTop: SPACING.l,
+    marginBottom: SPACING.m,
+  },
+  quickList: {
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.s,
+    gap: SPACING.m,
+  },
+  quickCard: {
+    width: 220,
+    marginRight: 0,
+  },
+  sectionValue: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: COLORS.primary,
+    fontFamily: FONTS.mono,
+  },
+  greetingSection: {
+    marginTop: SPACING.xs,
+  },
+  greetingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 6,
+  },
+  greetingEmoji: {
+    fontSize: 16,
+  },
+  greeting: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.primary,
+    letterSpacing: 0.2,
+  },
+  subGreeting: {
+    fontSize: 30,
+    fontWeight: "700",
+    color: COLORS.text,
+    lineHeight: 36,
+    fontFamily: FONTS.serif,
+    letterSpacing: -0.5,
+  },
+  categoriesSection: {
+    marginTop: SPACING.s,
+  },
+  sectionHeaderRow: {
+    flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: SPACING.m,
   },
-  footerSpacer: {
-    height: 80, // Space for tab bar
+  sectionLabel: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.textMuted,
+    letterSpacing: 2,
+    fontFamily: FONTS.mono,
   },
-  emptyContainer: {
-    flex: 1,
-    paddingVertical: SPACING.xl * 2,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  emptyText: {
-    marginTop: SPACING.m,
-    fontSize: 16,
-    color: COLORS.textLight,
+  recipeCount: {
+    fontSize: 11,
     fontWeight: "600",
-  }
+    color: COLORS.textMuted,
+    fontFamily: FONTS.mono,
+  },
+  recentSearches: {
+    marginTop: SPACING.m,
+    paddingHorizontal: SPACING.m,
+  },
+  recentChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACING.s,
+    marginTop: SPACING.s,
+  },
+  recentChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.elevated,
+    borderRadius: RADIUS.m,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingLeft: 10,
+    paddingRight: 4,
+    height: 34,
+  },
+  recentChipContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingRight: 6,
+  },
+  recentText: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    fontWeight: "500",
+  },
+  removeRecent: {
+    padding: 4,
+  },
+  clearAllText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: COLORS.error,
+    fontFamily: FONTS.mono,
+  },
+  footerSpacer: {
+    height: 100,
+  },
 });

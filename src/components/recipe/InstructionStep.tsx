@@ -3,7 +3,8 @@ import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS, SPACING } from "../../constants/theme";
+import { COLORS, RADIUS, SPACING, FONTS } from "../../constants/theme";
+import { LinearGradient } from "expo-linear-gradient";
 
 const alertSound = require("../../../assets/sounds/alert.wav");
 const successSound = require("../../../assets/sounds/success.wav");
@@ -15,7 +16,12 @@ interface Props {
   readOnly?: boolean;
 }
 
-export default function InstructionStep({ step, text, timerSeconds, readOnly = false }: Props) {
+export default function InstructionStep({
+  step,
+  text,
+  timerSeconds,
+  readOnly = false,
+}: Props) {
   const [timeLeft, setTimeLeft] = useState(timerSeconds || 0);
   const [isActive, setIsActive] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -39,7 +45,7 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
         console.warn("Error playing instruction sound:", error);
       }
     },
-    [player],
+    [player]
   );
 
   useEffect(() => {
@@ -89,18 +95,25 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
   return (
     <View style={[styles.container, isCompleted && styles.containerCompleted]}>
       <View style={styles.header}>
-        <View
-          style={[styles.stepBadge, isCompleted && styles.stepBadgeCompleted]}
-        >
-          {isCompleted ? (
-            <Ionicons name="checkmark" size={14} color={COLORS.text} />
-          ) : (
-            <Text style={styles.stepText}>{step}</Text>
-          )}
+        <View style={styles.headerLeft}>
+          <View
+            style={[
+              styles.stepBadge,
+              isCompleted && styles.stepBadgeCompleted,
+            ]}
+          >
+            {isCompleted ? (
+              <Ionicons name="checkmark" size={12} color="white" />
+            ) : (
+              <Text style={styles.stepText}>{step}</Text>
+            )}
+          </View>
+          <Text
+            style={[styles.title, isCompleted && styles.textCompleted]}
+          >
+            Step {step}
+          </Text>
         </View>
-        <Text style={[styles.title, isCompleted && styles.textCompleted]}>
-          Step {step}
-        </Text>
 
         {!readOnly && (
           <Pressable
@@ -113,7 +126,7 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
             <Ionicons
               name={isCompleted ? "checkmark-circle" : "ellipse-outline"}
               size={22}
-              color={isCompleted ? COLORS.success : COLORS.textLight}
+              color={isCompleted ? COLORS.success : COLORS.textMuted}
             />
           </Pressable>
         )}
@@ -133,16 +146,26 @@ export default function InstructionStep({ step, text, timerSeconds, readOnly = f
             setIsActive(!isActive);
           }}
         >
-          <Ionicons
-            name={isActive ? "stop-circle" : "timer-outline"}
-            size={18}
-            color={COLORS.text}
-          />
-          <Text style={styles.timerBtnText}>
-            {isActive
-              ? `Stop Timer (${formatTime(timeLeft)})`
-              : `Start Timer (${formatTime(timerSeconds)})`}
-          </Text>
+          {isActive ? (
+            <View style={styles.timerBtnContent}>
+              <Ionicons name="pause" size={16} color={COLORS.text} />
+              <Text style={styles.timerBtnText}>
+                Pause ({formatTime(timeLeft)})
+              </Text>
+            </View>
+          ) : (
+            <LinearGradient
+              colors={[COLORS.primary, COLORS.primaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.timerBtnContent}
+            >
+              <Ionicons name="timer-outline" size={16} color="#1A0E04" />
+              <Text style={[styles.timerBtnText, { color: "#1A0E04" }]}>
+                Start Timer ({formatTime(timerSeconds)})
+              </Text>
+            </LinearGradient>
+          )}
         </Pressable>
       )}
     </View>
@@ -159,9 +182,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   containerCompleted: {
-    backgroundColor: COLORS.bg3,
+    backgroundColor: COLORS.elevated,
     borderColor: COLORS.border,
-    opacity: 0.8,
+    opacity: 0.7,
   },
   header: {
     flexDirection: "row",
@@ -169,28 +192,35 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: SPACING.s,
   },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.s,
+  },
   stepBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: COLORS.text,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: COLORS.primaryLight,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: SPACING.s,
+    borderWidth: 1,
+    borderColor: COLORS.borderAccent,
   },
   stepBadgeCompleted: {
     backgroundColor: COLORS.success,
+    borderColor: COLORS.success,
   },
   stepText: {
-    color: COLORS.text,
+    color: COLORS.primary,
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "800",
+    fontFamily: FONTS.mono,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 14,
+    fontWeight: "700",
     color: COLORS.text,
-    flex: 1,
   },
   completeToggle: {
     padding: 2,
@@ -206,23 +236,28 @@ const styles = StyleSheet.create({
   },
   textCompleted: {
     textDecorationLine: "line-through",
-    color: COLORS.textLight,
+    color: COLORS.textMuted,
   },
   timerButton: {
-    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.m,
+    overflow: "hidden",
+  },
+  timerActive: {
+    backgroundColor: COLORS.elevated,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  timerBtnContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: SPACING.s,
-    borderRadius: RADIUS.m,
-  },
-  timerActive: {
-    backgroundColor: COLORS.success,
+    paddingVertical: SPACING.s + 2,
+    gap: SPACING.s,
   },
   timerBtnText: {
-    color: "white",
-    fontWeight: "bold",
-    marginLeft: SPACING.s,
-    fontSize: 14,
+    color: COLORS.text,
+    fontWeight: "700",
+    fontSize: 13,
+    fontFamily: FONTS.mono,
   },
 });

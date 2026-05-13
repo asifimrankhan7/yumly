@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Speech from "expo-speech";
 import React, { useEffect, useRef, useState } from "react";
@@ -14,12 +15,13 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CookingPot from "../../src/components/recipe/CookingPot";
-import { COLORS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
+import { COLORS, RADIUS, SHADOWS, SPACING, FONTS } from "../../src/constants/theme";
 import { useMealPlan } from "../../src/context/MealPlanContext";
 import recipesData from "../../src/data/recipes.json";
+import { useUser } from "../../src/context/UserContext";
 import IngredientList from "../../src/components/recipe/IngredientList";
 import { Recipe } from "../../src/types";
 
@@ -31,13 +33,18 @@ const startSound = require("../../assets/sounds/start.wav");
 
 export default function CookingScreen() {
   const { id, servings: servingsParam } = useLocalSearchParams();
-  const recipeId = Array.isArray(id) ? (id[0] ?? "") : (id ?? "");
+  const recipeId = Array.isArray(id) ? id[0] ?? "" : id ?? "";
   const router = useRouter();
   const { removeByRecipeId } = useMealPlan();
+  const { incrementRecipesCooked } = useUser();
   const recipe = recipes.find((r) => r.id === recipeId);
 
   const initialServings = recipe?.metadata.servings || 4;
-  const servings = servingsParam ? parseInt(Array.isArray(servingsParam) ? servingsParam[0] : servingsParam) : initialServings;
+  const servings = servingsParam
+    ? parseInt(
+        Array.isArray(servingsParam) ? servingsParam[0] : servingsParam
+      )
+    : initialServings;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -70,7 +77,7 @@ export default function CookingScreen() {
         console.warn("Error playing one-shot sound:", error);
       }
     },
-    [oneShotPlayer],
+    [oneShotPlayer]
   );
 
   // TTS Logic
@@ -164,15 +171,21 @@ export default function CookingScreen() {
     playSound(successSound);
     if (recipe) {
       removeByRecipeId(recipe.id);
+      incrementRecipesCooked();
     }
     setShowSuccess(true);
-  }, [playSound, recipe, removeByRecipeId]);
+  }, [playSound, recipe, removeByRecipeId, incrementRecipesCooked]);
 
   // Handle timer completion (haptics and completion sound)
   const prevTimeLeft = useRef(timeLeft);
   useEffect(() => {
     const hadTimer = timerStepRef.current !== null;
-    if (hadTimer && prevTimeLeft.current > 0 && timeLeft === 0 && !isTimerActive) {
+    if (
+      hadTimer &&
+      prevTimeLeft.current > 0 &&
+      timeLeft === 0 &&
+      !isTimerActive
+    ) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       playSound(alertSound);
 
@@ -182,7 +195,14 @@ export default function CookingScreen() {
       }
     }
     prevTimeLeft.current = timeLeft;
-  }, [timeLeft, isTimerActive, currentStep, instructions.length, playSound, handleFinish]);
+  }, [
+    timeLeft,
+    isTimerActive,
+    currentStep,
+    instructions.length,
+    playSound,
+    handleFinish,
+  ]);
 
   if (!recipe) return null;
 
@@ -221,27 +241,26 @@ export default function CookingScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.closeBtn}>
-          <Ionicons name="close" size={24} color={COLORS.text} />
+          <Ionicons name="close" size={20} color={COLORS.textMuted} />
         </Pressable>
-        <View style={styles.progressHeader}>
-          <Text style={styles.progressText}>
-            Step {currentStep + 1} of {instructions.length}
-          </Text>
-          <View style={styles.progressBar}>
-            <View
-              style={[styles.progressFill, { width: `${progress * 100}%` }]}
-            />
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressText}>
+              STEP {currentStep + 1}/{instructions.length}
+            </Text>
+            <View style={styles.progressBar}>
+              <Animated.View
+                style={StyleSheet.flatten([styles.progressFill, { width: `${progress * 100}%` }])}
+              />
+            </View>
           </View>
-        </View>
-        <Pressable 
+        <Pressable
           style={styles.ingredientsBtn}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             setShowIngredients(true);
           }}
         >
-          <Ionicons name="list" size={20} color={COLORS.primary} />
-          <Text style={styles.ingredientsBtnText}>Ingredients</Text>
+          <Ionicons name="list" size={16} color={COLORS.primary} />
         </Pressable>
       </View>
 
@@ -258,15 +277,18 @@ export default function CookingScreen() {
             style={styles.instructionCard}
           >
             <View style={styles.instructionHeaderRow}>
-              <Text style={styles.instructionTitle}>Instruction</Text>
+              <Text style={styles.instructionLabel}>INSTRUCTION</Text>
               <Pressable
                 onPress={isSpeaking ? stopSpeaking : speakInstruction}
-                style={styles.speakerBtn}
+                style={StyleSheet.flatten([
+                  styles.speakerBtn,
+                  isSpeaking && styles.speakerBtnActive,
+                ])}
               >
                 <Ionicons
                   name={isSpeaking ? "volume-high" : "volume-medium-outline"}
-                  size={24}
-                  color={isSpeaking ? COLORS.primary : COLORS.textSecondary}
+                  size={20}
+                  color={isSpeaking ? COLORS.primary : COLORS.textMuted}
                 />
               </Pressable>
             </View>
@@ -284,24 +306,33 @@ export default function CookingScreen() {
               />
 
               <Pressable
-                style={[
-                  styles.timerToggle,
-                  isTimerActive && styles.timerToggleActive,
-                ]}
+                style={styles.timerToggle}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   if (!isTimerActive) playSound(startSound);
                   setIsTimerActive(!isTimerActive);
                 }}
               >
-                <Ionicons
-                  name={isTimerActive ? "pause" : "play"}
-                  size={24}
-                  color="white"
-                />
-                <Text style={styles.timerToggleText}>
-                  {isTimerActive ? "Pause Timer" : "Start Timer"}
-                </Text>
+                {isTimerActive ? (
+                  <View style={styles.timerToggleInner}>
+                    <Ionicons name="pause" size={20} color={COLORS.text} />
+                    <Text style={styles.timerToggleText}>Pause Timer</Text>
+                  </View>
+                ) : (
+                  <LinearGradient
+                    colors={[COLORS.primary, COLORS.primaryDark]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.timerToggleInner}
+                  >
+                    <Ionicons name="play" size={20} color="#1A0E04" />
+                    <Text
+                      style={StyleSheet.flatten([styles.timerToggleText, { color: "#1A0E04" }])}
+                    >
+                      Start Timer
+                    </Text>
+                  </LinearGradient>
+                )}
               </Pressable>
             </View>
           ) : (
@@ -321,58 +352,83 @@ export default function CookingScreen() {
           <View style={{ height: 40 }} />
         </ScrollView>
 
-        {/* Fixed Footer - Now inside mainContent but at the bottom */}
+        {/* Fixed Footer */}
         <View style={styles.footer}>
           <Pressable
-            style={[styles.navBtn, currentStep === 0 && styles.navBtnDisabled]}
+            style={StyleSheet.flatten([
+              styles.navBtn,
+              currentStep === 0 && styles.navBtnDisabled,
+            ])}
             onPress={handleBack}
             disabled={currentStep === 0}
           >
             <Ionicons
               name="chevron-back"
-              size={20}
-              color={currentStep === 0 ? COLORS.textSecondary : COLORS.text}
+              size={18}
+              color={currentStep === 0 ? COLORS.textMuted : COLORS.text}
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.navBtnText,
                 currentStep === 0 && styles.navBtnTextDisabled,
-              ]}
+              ])}
             >
               Back
             </Text>
           </Pressable>
 
           <Pressable style={styles.nextBtn} onPress={handleNext}>
-            <Text style={styles.nextBtnText}>
-              {currentStep === instructions.length - 1 ? "Finish" : "Next Step"}
-            </Text>
-            {currentStep < instructions.length - 1 && (
-              <Ionicons name="chevron-forward" size={20} color="white" />
-            )}
+            <LinearGradient
+              colors={
+                currentStep === instructions.length - 1
+                  ? [COLORS.success, "#6B9B6B"]
+                  : [COLORS.primary, COLORS.primaryDark]
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.nextBtnGradient}
+            >
+              <Text style={styles.nextBtnText}>
+                {currentStep === instructions.length - 1
+                  ? "Finish"
+                  : "Next Step"}
+              </Text>
+              {currentStep < instructions.length - 1 ? (
+                <Ionicons name="chevron-forward" size={18} color="#1A0E04" />
+              ) : (
+                <Ionicons name="checkmark" size={18} color="#1A0E04" />
+              )}
+            </LinearGradient>
           </Pressable>
         </View>
       </View>
 
       {/* Ingredients Modal */}
-      <Modal 
-        animationType="slide" 
-        transparent={true} 
+      <Modal
+        animationType="slide"
+        transparent={true}
         visible={showIngredients}
         onRequestClose={() => setShowIngredients(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Ingredients</Text>
-              <Pressable onPress={() => setShowIngredients(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+              <View>
+                <Text style={styles.modalLabel}>REFERENCE</Text>
+                <Text style={styles.modalTitle}>Ingredients</Text>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setShowIngredients(false)}
+              >
+                <Ionicons name="close" size={20} color={COLORS.textMuted} />
               </Pressable>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <IngredientList 
-                ingredients={recipe.ingredients} 
-                initialServings={initialServings} 
+              <IngredientList
+                ingredients={recipe.ingredients}
+                initialServings={initialServings}
                 currentServings={servings}
               />
             </ScrollView>
@@ -384,16 +440,16 @@ export default function CookingScreen() {
       <Modal animationType="fade" transparent={true} visible={showSuccess}>
         <View style={styles.successOverlay}>
           <Animated.View
-            entering={FadeIn.delay(200)}
+            entering={FadeInUp.delay(200).springify()}
             style={styles.successContent}
           >
             <View style={styles.successIconCircle}>
-              <Ionicons name="checkmark-done" size={60} color="white" />
+              <Text style={styles.successEmoji}>🎉</Text>
             </View>
             <Text style={styles.successTitle}>Bon Appétit!</Text>
             <Text style={styles.successSubtitle}>
-              You&apos;ve successfully finished cooking {recipe.title}. The
-              recipe has been removed from your meal plan.
+              You&apos;ve finished cooking {recipe.title}. The recipe has been
+              removed from your meal plan.
             </Text>
 
             <View style={styles.successActions}>
@@ -404,7 +460,13 @@ export default function CookingScreen() {
                   router.push("/(tabs)");
                 }}
               >
-                <Text style={styles.successHomeText}>Back to Home</Text>
+                <LinearGradient
+                  colors={[COLORS.primary, COLORS.primaryDark]}
+                  style={styles.successHomeBtnGradient}
+                >
+                  <Ionicons name="home-outline" size={18} color="#1A0E04" />
+                  <Text style={styles.successHomeText}>Back to Home</Text>
+                </LinearGradient>
               </Pressable>
 
               <Pressable
@@ -437,7 +499,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.s,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
-    height: 60,
+    height: 56,
   },
   mainContent: {
     flex: 1,
@@ -448,25 +510,34 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: SPACING.m,
-    paddingBottom: 20, // Reduced as we have the footer spacer
+    paddingBottom: 20,
     flexGrow: 1,
   },
   closeBtn: {
-    padding: SPACING.s,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.elevated,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   progressHeader: {
     alignItems: "center",
     flex: 1,
+    paddingHorizontal: SPACING.m,
   },
   progressText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: COLORS.textSecondary,
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.textMuted,
     marginBottom: 4,
-    letterSpacing: 0.5,
+    letterSpacing: 2,
+    fontFamily: FONTS.mono,
   },
   progressBar: {
-    width: 100,
+    width: 120,
     height: 4,
     backgroundColor: COLORS.bg3,
     borderRadius: 2,
@@ -475,47 +546,73 @@ const styles = StyleSheet.create({
   progressFill: {
     height: "100%",
     backgroundColor: COLORS.primary,
+    borderRadius: 2,
   },
   ingredientsBtn: {
-    flexDirection: "row",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.primaryLight,
     alignItems: "center",
-    backgroundColor: COLORS.bg3,
-    paddingHorizontal: SPACING.s,
-    paddingVertical: SPACING.xs,
-    borderRadius: RADIUS.s,
-    gap: 4,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.borderAccent,
   },
-  ingredientsBtnText: {
-    color: COLORS.primary,
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  placeholder: {
-    width: 40,
-  },
+  // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "flex-end",
   },
   modalContent: {
     backgroundColor: COLORS.card,
-    borderTopLeftRadius: RADIUS.xl,
-    borderTopRightRadius: RADIUS.xl,
+    borderTopLeftRadius: RADIUS.xxl,
+    borderTopRightRadius: RADIUS.xxl,
     padding: SPACING.l,
     maxHeight: "80%",
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: COLORS.border,
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: COLORS.bg3,
+    alignSelf: "center",
+    marginBottom: SPACING.l,
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: SPACING.m,
+  },
+  modalLabel: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.primary,
+    letterSpacing: 2,
+    marginBottom: 4,
+    fontFamily: FONTS.mono,
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: COLORS.text,
+    fontFamily: FONTS.serif,
   },
+  modalCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.elevated,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  // Instruction
   instructionCard: {
     backgroundColor: COLORS.card,
     padding: SPACING.l,
@@ -528,26 +625,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: SPACING.s,
+    marginBottom: SPACING.m,
   },
   speakerBtn: {
-    padding: SPACING.xs,
-    borderRadius: RADIUS.s,
-    backgroundColor: COLORS.primaryLight,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: COLORS.elevated,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
-  instructionTitle: {
-    fontSize: 12,
+  speakerBtnActive: {
+    backgroundColor: COLORS.primaryLight,
+    borderColor: COLORS.borderAccent,
+  },
+  instructionLabel: {
+    fontSize: 10,
     fontWeight: "800",
     color: COLORS.primary,
-    textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 2,
+    fontFamily: FONTS.mono,
   },
   instructionText: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "600",
     color: COLORS.text,
     lineHeight: 26,
   },
+  // Timer
   timerSection: {
     marginTop: SPACING.xl,
     alignItems: "center",
@@ -555,22 +662,22 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.xl,
   },
   timerToggle: {
+    borderRadius: RADIUS.l,
+    overflow: "hidden",
+    minWidth: 180,
+    ...SHADOWS.glow,
+  },
+  timerToggleInner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.bg3,
+    justifyContent: "center",
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.s + 4,
-    borderRadius: RADIUS.m,
-    ...SHADOWS.small,
-  },
-  timerToggleActive: {
-    backgroundColor: COLORS.primary,
+    gap: SPACING.s,
   },
   timerToggleText: {
-    color: COLORS.text,
-    fontWeight: "bold",
-    fontSize: 16,
-    marginLeft: SPACING.s,
+    fontWeight: "800",
+    fontSize: 15,
   },
   noTimerSection: {
     marginTop: SPACING.xl,
@@ -580,11 +687,12 @@ const styles = StyleSheet.create({
   },
   noTimerText: {
     textAlign: "center",
-    color: COLORS.textSecondary,
+    color: COLORS.textMuted,
     fontSize: 14,
     paddingHorizontal: SPACING.xl,
     lineHeight: 20,
   },
+  // Footer
   footer: {
     flexDirection: "row",
     paddingHorizontal: SPACING.m,
@@ -600,46 +708,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: SPACING.s,
+    gap: 4,
   },
   navBtnDisabled: {
     opacity: 0.2,
   },
   navBtnText: {
-    fontSize: 15,
-    fontWeight: "800",
+    fontSize: 14,
+    fontWeight: "700",
     color: COLORS.text,
-    marginLeft: 4,
   },
   navBtnTextDisabled: {
-    color: COLORS.textSecondary,
+    color: COLORS.textMuted,
   },
   nextBtn: {
+    borderRadius: RADIUS.l,
+    overflow: "hidden",
+    minWidth: 140,
+    ...SHADOWS.glow,
+  },
+  nextBtnGradient: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.primary,
+    justifyContent: "center",
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.s + 4,
-    borderRadius: RADIUS.m,
-    minWidth: 120,
-    justifyContent: "center",
-    ...SHADOWS.small,
+    gap: 6,
   },
   nextBtnText: {
-    color: COLORS.text,
-    fontSize: 15,
+    color: "#1A0E04",
+    fontSize: 14,
     fontWeight: "800",
-    marginRight: 4,
   },
+  // Success
   successOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.8)",
+    backgroundColor: "rgba(0,0,0,0.85)",
     justifyContent: "center",
     alignItems: "center",
     padding: SPACING.xl,
   },
   successContent: {
     backgroundColor: COLORS.card,
-    borderRadius: RADIUS.xl,
+    borderRadius: RADIUS.xxl,
     padding: SPACING.xl,
     alignItems: "center",
     width: "100%",
@@ -647,50 +758,65 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   successIconCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.success,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: COLORS.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: SPACING.l,
+    borderWidth: 2,
+    borderColor: COLORS.borderAccent,
+  },
+  successEmoji: {
+    fontSize: 44,
   },
   successTitle: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "800",
     color: COLORS.text,
     marginBottom: SPACING.s,
+    fontFamily: FONTS.serif,
   },
   successSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.textSecondary,
     textAlign: "center",
-    lineHeight: 24,
+    lineHeight: 22,
     marginBottom: SPACING.xl,
   },
   successActions: {
     width: "100%",
   },
   successHomeBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.m,
-    borderRadius: RADIUS.m,
-    alignItems: "center",
+    borderRadius: RADIUS.l,
+    overflow: "hidden",
     marginBottom: SPACING.s,
+    ...SHADOWS.glow,
+  },
+  successHomeBtnGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: SPACING.m,
+    gap: SPACING.s,
   },
   successHomeText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: "#1A0E04",
+    fontSize: 15,
+    fontWeight: "800",
   },
   successPlanBtn: {
     paddingVertical: SPACING.m,
-    borderRadius: RADIUS.m,
+    borderRadius: RADIUS.l,
     alignItems: "center",
+    backgroundColor: COLORS.elevated,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   successPlanText: {
     color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontWeight: "700",
   },
 });

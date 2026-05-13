@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, StyleSheet, Text, Pressable } from 'react-native';
+import { Animated, StyleSheet, Text, Pressable, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS } from '../../constants/theme';
@@ -33,7 +33,9 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
         }}
       >
         <Animated.View style={[styles.actionIcon, { transform: [{ scale }] }]}>
-          <Ionicons name="trash-outline" size={28} color={COLORS.text} />
+          <View style={styles.trashCircle}>
+            <Ionicons name="trash-outline" size={20} color={COLORS.text} />
+          </View>
           <Text style={styles.actionText}>Remove</Text>
         </Animated.View>
       </Pressable>
@@ -47,12 +49,6 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
       rightThreshold={40}
       renderRightActions={renderRightActions}
       containerStyle={styles.swipeContainer}
-      onSwipeableOpen={(direction) => {
-        if (direction === 'right') {
-          // Trigger delete on full swipe if needed, or just let the button handle it
-          // For now, let's keep it manual as requested "reusable button"
-        }
-      }}
     >
       {children}
     </Swipeable>
@@ -61,8 +57,8 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
 
 const styles = StyleSheet.create({
   swipeContainer: {
-    marginBottom: SPACING.m,
-    borderRadius: RADIUS.m,
+    marginBottom: SPACING.s + 2,
+    borderRadius: RADIUS.l,
     overflow: 'hidden',
   },
   rightAction: {
@@ -71,16 +67,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     width: 100,
     height: '100%',
-    borderRadius: RADIUS.m,
+    borderRadius: RADIUS.l,
   },
   actionIcon: {
     alignItems: 'center',
     paddingRight: SPACING.m,
   },
+  trashCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
   actionText: {
     color: COLORS.text,
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
-    marginTop: 4,
+    letterSpacing: 0.5,
   },
 });

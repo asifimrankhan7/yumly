@@ -34,12 +34,23 @@ export default function RootLayout() {
                 screenOptions={{
                   headerShown: false,
                   contentStyle: { backgroundColor: COLORS.background },
+                  animation: "slide_from_right",
                 }}
               >
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen
                   name="recipe/[id]"
-                  options={{ presentation: "modal" }}
+                  options={{
+                    presentation: "modal",
+                    animation: "slide_from_bottom",
+                  }}
+                />
+                <Stack.Screen
+                  name="cooking/[id]"
+                  options={{
+                    presentation: "fullScreenModal",
+                    animation: "fade",
+                  }}
                 />
               </Stack>
             </SafeAreaProvider>

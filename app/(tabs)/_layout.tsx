@@ -1,60 +1,193 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { Platform, StyleSheet, View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../../src/constants/theme";
+import { COLORS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
+import { useMealPlan } from "../../src/context/MealPlanContext";
+import { BlurView } from "expo-blur";
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function TabsLayout() {
-  const { favorites } = useFavorites();
+const TAB_ITEMS = [
+  { name: "index", title: "Explore", iconActive: "compass", iconInactive: "compass-outline" },
+  { name: "favorites", title: "Saved", iconActive: "bookmark", iconInactive: "bookmark-outline" },
+  { name: "mealplan", title: "Kitchen", iconActive: "flame", iconInactive: "flame-outline" },
+] as const;
+
+function CustomTabBar({ state, descriptors, navigation }: any) {
+  const { favorites = [] } = useFavorites();
+  const { meals = [] } = useMealPlan();
+  const insets = useSafeAreaInsets();
   const favoritesCount = favorites.length;
+  const mealPlanCount = meals.length;
 
   return (
+    <View style={StyleSheet.flatten([styles.tabBarWrapper, { paddingBottom: Math.max(insets.bottom, 8) }])}>
+      <View style={styles.tabBarContainer}>
+        {/* Glass background */}
+        <View style={styles.tabBarGlass} />
+        
+        <View style={styles.tabBarInner}>
+          {state.routes.map((route: any, index: number) => {
+            const isFocused = state.index === index;
+            const tab = TAB_ITEMS[index];
+            if (!tab) return null;
+
+            const iconName = isFocused ? tab.iconActive : tab.iconInactive;
+            const showBadge =
+              (tab.name === "favorites" && favoritesCount > 0) ||
+              (tab.name === "mealplan" && mealPlanCount > 0);
+            const badgeCount =
+              tab.name === "favorites" ? favoritesCount : mealPlanCount;
+
+            return (
+              <Pressable
+                key={route.key}
+                onPress={() => {
+                  const event = navigation.emit({
+                    type: "tabPress",
+                    target: route.key,
+                    canPreventDefault: true,
+                  });
+                  if (!isFocused && !event.defaultPrevented) {
+                    navigation.navigate(route.name);
+                  }
+                }}
+                style={styles.tabItem}
+              >
+                <Animated.View
+                  style={StyleSheet.flatten([
+                    styles.tabContent,
+                    isFocused && styles.tabContentActive,
+                  ])}
+                >
+                  <View style={styles.iconWrapper}>
+                    <Ionicons
+                      name={iconName as any}
+                      size={20}
+                      color={isFocused ? COLORS.primary : COLORS.textMuted}
+                    />
+                    {showBadge && (
+                      <View style={styles.badge}>
+                        <Text style={styles.badgeText}>
+                          {badgeCount > 9 ? "9+" : badgeCount}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.tabLabel,
+                      isFocused && styles.tabLabelActive,
+                    ])}
+                  >
+                    {tab.title}
+                  </Text>
+                </Animated.View>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+export default function TabsLayout() {
+  return (
     <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textLight,
-        tabBarStyle: {
-          backgroundColor: COLORS.background,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.border,
-          height: Platform.OS === "ios" ? 88 : 68,
-          paddingBottom: Platform.OS === "ios" ? 30 : 10,
-          paddingTop: 10,
-          elevation: 0, // Remove shadow on Android
-          shadowOpacity: 0, // Remove shadow on iOS
-        },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "home" : "home-outline"} size={22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: "Favorites",
-          tabBarBadge: favoritesCount > 0 ? favoritesCount : undefined,
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "heart" : "heart-outline"} size={22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="mealplan"
-        options={{
-          title: "Meal Plan",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "restaurant" : "restaurant-outline"} size={22} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="favorites" />
+      <Tabs.Screen name="mealplan" />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarWrapper: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.s,
+    backgroundColor: "transparent",
+  },
+  tabBarContainer: {
+    borderRadius: RADIUS.xxl,
+    overflow: "hidden",
+    ...SHADOWS.medium,
+  },
+  tabBarGlass: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(22, 22, 24, 0.92)",
+    borderWidth: 1,
+    borderColor: COLORS.borderLight,
+    borderRadius: RADIUS.xxl,
+  },
+  tabBarInner: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingVertical: SPACING.s + 2,
+    paddingHorizontal: SPACING.s,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: "center",
+  },
+  tabContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: SPACING.xs + 2,
+    paddingHorizontal: SPACING.m,
+    borderRadius: RADIUS.l,
+  },
+  tabContentActive: {
+    backgroundColor: COLORS.primaryLight,
+  },
+  iconWrapper: {
+    position: "relative",
+    marginBottom: 2,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: COLORS.textMuted,
+    letterSpacing: 0.3,
+  },
+  tabLabelActive: {
+    color: COLORS.primary,
+    fontWeight: "700",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -8,
+    backgroundColor: COLORS.error,
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+    borderWidth: 1.5,
+    borderColor: COLORS.surface,
+  },
+  badgeText: {
+    fontSize: 9,
+    fontWeight: "bold",
+    color: COLORS.text,
+  },
+});

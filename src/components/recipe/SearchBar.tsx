@@ -1,37 +1,92 @@
-import React from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import React, { useRef, useState } from "react";
+import { View, TextInput, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, SPACING, RADIUS } from "../../constants/theme";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+  interpolateColor,
+} from "react-native-reanimated";
 
 interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  onSubmitEditing?: () => void;
 }
 
-export default function SearchBar({ value, onChangeText }: SearchBarProps) {
+const AnimatedView = Animated.createAnimatedComponent(View);
+
+export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubmitEditing }: SearchBarProps) {
+  const inputRef = useRef<TextInput>(null);
+  const focusProgress = useSharedValue(0);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const containerAnimStyle = useAnimatedStyle(() => ({
+    borderColor: interpolateColor(
+      focusProgress.value,
+      [0, 1],
+      ["rgba(245, 240, 235, 0.06)", "rgba(232, 168, 56, 0.3)"]
+    ),
+    backgroundColor: interpolateColor(
+      focusProgress.value,
+      [0, 1],
+      [COLORS.bg3, COLORS.elevated]
+    ),
+  }));
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    focusProgress.value = withTiming(1, { duration: 300 });
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    focusProgress.value = withTiming(0, { duration: 300 });
+    onBlur?.();
+  };
+
   return (
-    <View style={styles.container}>
-      <Ionicons name="search-outline" size={20} color={COLORS.textLight} />
-      <TextInput 
-        placeholder="Search 200+ delicious recipes..."
-        placeholderTextColor={COLORS.textLight}
-        style={styles.input}
-        value={value}
-        onChangeText={onChangeText}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      {value.length > 0 && (
-        <View style={styles.clearButton}>
-          <Ionicons 
-            name="close-circle" 
-            size={18} 
-            color={COLORS.textLight} 
-            onPress={() => onChangeText("")}
+    <Pressable onPress={() => inputRef.current?.focus()}>
+      <AnimatedView style={[styles.container, containerAnimStyle]}>
+        <View style={styles.searchIconWrap}>
+          <Ionicons
+            name="search"
+            size={18}
+            color={isFocused ? COLORS.primary : COLORS.textMuted}
           />
         </View>
-      )}
-    </View>
+        <TextInput
+          ref={inputRef}
+          placeholder="Search recipes, ingredients..."
+          placeholderTextColor={COLORS.textMuted}
+          style={styles.input}
+          value={value}
+          onChangeText={onChangeText}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onSubmitEditing={onSubmitEditing}
+          returnKeyType="search"
+          selectionColor={COLORS.primary}
+        />
+        {value.length > 0 && (
+          <Pressable
+            style={styles.clearButton}
+            onPress={() => onChangeText("")}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.clearCircle}>
+              <Ionicons name="close" size={12} color={COLORS.text} />
+            </View>
+          </Pressable>
+        )}
+      </AnimatedView>
+    </Pressable>
   );
 }
 
@@ -39,21 +94,41 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.bg3,
     marginHorizontal: SPACING.m,
     paddingHorizontal: SPACING.m,
-    paddingVertical: SPACING.s + 2,
-    borderRadius: RADIUS.xl,
-    marginVertical: SPACING.l,
+    paddingVertical: SPACING.s,
+    borderRadius: RADIUS.l,
+    marginVertical: SPACING.m,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  searchIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: "rgba(232, 168, 56, 0.08)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     flex: 1,
-    marginLeft: SPACING.s,
-    fontSize: 14,
+    marginLeft: SPACING.s + 2,
+    fontSize: 15,
     color: COLORS.text,
-    paddingVertical: 8,
+    paddingVertical: 6,
+    fontWeight: "400",
   },
   clearButton: {
     padding: SPACING.xs,
+  },
+  clearCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: COLORS.bg3,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
 });

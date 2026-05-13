@@ -9,7 +9,7 @@ import Animated, {
   withDelay,
   Easing,
 } from "react-native-reanimated";
-import { COLORS, SHADOWS } from "../../constants/theme";
+import { COLORS, SHADOWS, FONTS } from "../../constants/theme";
 
 interface CookingPotProps {
   isActive: boolean;
@@ -17,7 +17,13 @@ interface CookingPotProps {
   formatTime: (seconds: number) => string;
 }
 
-const SteamParticle = ({ delay, isActive }: { delay: number; isActive: boolean }) => {
+const SteamParticle = ({
+  delay,
+  isActive,
+}: {
+  delay: number;
+  isActive: boolean;
+}) => {
   const translateY = useSharedValue(0);
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(0);
@@ -25,23 +31,35 @@ const SteamParticle = ({ delay, isActive }: { delay: number; isActive: boolean }
   useEffect(() => {
     if (isActive) {
       translateY.value = withRepeat(
-        withDelay(delay, withTiming(-60, { duration: 2000, easing: Easing.out(Easing.ease) })),
+        withDelay(
+          delay,
+          withTiming(-60, {
+            duration: 2000,
+            easing: Easing.out(Easing.ease),
+          })
+        ),
         -1,
         false
       );
       translateX.value = withRepeat(
-        withDelay(delay, withSequence(
-          withTiming(15, { duration: 1000 }),
-          withTiming(-15, { duration: 1000 })
-        )),
+        withDelay(
+          delay,
+          withSequence(
+            withTiming(15, { duration: 1000 }),
+            withTiming(-15, { duration: 1000 })
+          )
+        ),
         -1,
         false
       );
       opacity.value = withRepeat(
-        withDelay(delay, withSequence(
-          withTiming(0.6, { duration: 500 }),
-          withTiming(0, { duration: 1500 })
-        )),
+        withDelay(
+          delay,
+          withSequence(
+            withTiming(0.5, { duration: 500 }),
+            withTiming(0, { duration: 1500 })
+          )
+        ),
         -1,
         false
       );
@@ -63,9 +81,14 @@ const SteamParticle = ({ delay, isActive }: { delay: number; isActive: boolean }
   return <Animated.View style={[styles.steam, animatedStyle]} />;
 };
 
-export default function CookingPot({ isActive, timeLeft, formatTime }: CookingPotProps) {
+export default function CookingPot({
+  isActive,
+  timeLeft,
+  formatTime,
+}: CookingPotProps) {
   const jiggle = useSharedValue(0);
   const scale = useSharedValue(1);
+  const glowOpacity = useSharedValue(0);
 
   useEffect(() => {
     if (isActive) {
@@ -78,25 +101,44 @@ export default function CookingPot({ isActive, timeLeft, formatTime }: CookingPo
         true
       );
       scale.value = withRepeat(
-        withTiming(1.02, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1.02, {
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+        }),
+        -1,
+        true
+      );
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.6, { duration: 1200 }),
+          withTiming(0.2, { duration: 1200 })
+        ),
         -1,
         true
       );
     } else {
       jiggle.value = withTiming(0);
       scale.value = withTiming(1);
+      glowOpacity.value = withTiming(0);
     }
-  }, [isActive, jiggle, scale]);
+  }, [isActive, jiggle, scale, glowOpacity]);
 
   const potAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { rotate: `${jiggle.value}deg` },
-      { scale: scale.value }
+      { scale: scale.value },
     ],
+  }));
+
+  const glowAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
   }));
 
   return (
     <View style={styles.container}>
+      {/* Ambient glow */}
+      <Animated.View style={[styles.ambientGlow, glowAnimatedStyle]} />
+
       {/* Steam Particles */}
       <View style={styles.steamContainer}>
         <SteamParticle delay={0} isActive={isActive} />
@@ -108,7 +150,7 @@ export default function CookingPot({ isActive, timeLeft, formatTime }: CookingPo
       <Animated.View style={[styles.potWrapper, potAnimatedStyle]}>
         {/* Pot Lid Handle */}
         <View style={styles.potHandle} />
-        
+
         {/* Pot Lid */}
         <View style={styles.potLid} />
 
@@ -116,9 +158,11 @@ export default function CookingPot({ isActive, timeLeft, formatTime }: CookingPo
         <View style={styles.potBody}>
           <View style={styles.timeWrapper}>
             <Text style={styles.timeText}>{formatTime(timeLeft)}</Text>
-            <Text style={styles.statusText}>{isActive ? "BOILING" : "READY"}</Text>
+            <Text style={styles.statusText}>
+              {isActive ? "COOKING" : "READY"}
+            </Text>
           </View>
-          
+
           {/* Decorative Pot "Shine" */}
           <View style={styles.potShine} />
         </View>
@@ -130,9 +174,7 @@ export default function CookingPot({ isActive, timeLeft, formatTime }: CookingPo
 
       {/* Burner/Heat Base */}
       <View style={styles.burnerBase}>
-        {isActive && (
-          <View style={styles.heatGlow} />
-        )}
+        {isActive && <View style={styles.heatGlow} />}
       </View>
     </View>
   );
@@ -146,6 +188,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
+  ambientGlow: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: COLORS.primary,
+    opacity: 0,
+  },
   steamContainer: {
     position: "absolute",
     top: 10,
@@ -154,10 +204,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   steam: {
-    width: 20,
-    height: 20,
-    backgroundColor: "rgba(200, 200, 200, 0.4)",
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    backgroundColor: "rgba(200, 200, 200, 0.3)",
+    borderRadius: 9,
     position: "absolute",
   },
   potWrapper: {
@@ -165,21 +215,24 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   potHandle: {
-    width: 30,
+    width: 28,
     height: 12,
-    backgroundColor: "#333",
+    backgroundColor: COLORS.bg3,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     marginBottom: -2,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: COLORS.border,
   },
   potLid: {
     width: 140,
-    height: 15,
+    height: 16,
     backgroundColor: COLORS.primary,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    borderBottomWidth: 3,
-    borderBottomColor: "rgba(0,0,0,0.1)",
+    borderBottomWidth: 2,
+    borderBottomColor: "rgba(0,0,0,0.15)",
     ...SHADOWS.small,
   },
   potBody: {
@@ -197,57 +250,63 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     left: 15,
-    width: 30,
-    height: 60,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
+    width: 28,
+    height: 55,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 14,
     transform: [{ rotate: "15deg" }],
   },
   sideHandle: {
     position: "absolute",
-    width: 25,
-    height: 40,
-    backgroundColor: "#444",
+    width: 22,
+    height: 36,
+    backgroundColor: COLORS.bg3,
     top: 55,
     borderRadius: 8,
     zIndex: -1,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   leftHandle: {
-    left: -15,
+    left: -14,
   },
   rightHandle: {
-    right: -15,
+    right: -14,
   },
   timeWrapper: {
     alignItems: "center",
   },
   timeText: {
     fontSize: 36,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: "800",
+    color: "#1A0E04",
+    fontFamily: FONTS.mono,
   },
   statusText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "800",
-    color: "rgba(255,255,255,0.7)",
-    letterSpacing: 2,
+    color: "rgba(26,14,4,0.5)",
+    letterSpacing: 3,
     marginTop: -2,
+    fontFamily: FONTS.mono,
   },
   burnerBase: {
     width: 140,
     height: 6,
-    backgroundColor: "#222",
+    backgroundColor: COLORS.bg3,
     borderRadius: 3,
     marginTop: -5,
     zIndex: 1,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   heatGlow: {
     position: "absolute",
-    top: -10,
+    top: -12,
     left: 20,
     width: 100,
-    height: 15,
-    backgroundColor: "rgba(255, 100, 0, 0.4)",
+    height: 18,
+    backgroundColor: "rgba(232, 168, 56, 0.35)",
     borderRadius: 10,
   },
 });
