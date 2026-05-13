@@ -1,18 +1,18 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, SPACING, RADIUS, SHADOWS, FONTS } from "../../src/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { useMealPlan } from "../../src/context/MealPlanContext";
-import { Recipe } from "../../src/types";
-import recipesData from "../../src/data/recipes.json";
-import { Image } from "expo-image";
-import { RecipeImages } from "../../src/constants/recipe-images";
-import { Link, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeIn, FadeInRight, FadeInDown } from "react-native-reanimated";
-import EmptyState from "../../src/components/common/EmptyState";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link, useRouter } from "expo-router";
+import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Animated, { FadeIn, FadeInDown, FadeInRight } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+import EmptyState from "../../src/components/common/EmptyState";
+import { RecipeImages } from "../../src/constants/recipe-images";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
+import { useMealPlan } from "../../src/context/MealPlanContext";
+import recipesData from "../../src/data/recipes.json";
+import { Recipe } from "../../src/types";
 
 const recipes = recipesData as Recipe[];
 
@@ -151,8 +151,8 @@ export default function MealPlanScreen() {
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       router.push({
-                        pathname: `/cooking/${meal.recipeId}`,
-                        params: { servings: meal.servings },
+                        pathname: "/cooking/[id]",
+                        params: { id: meal.recipeId, servings: meal.servings },
                       });
                     }}
                   >

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo , useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -22,7 +22,6 @@ import EmptyState from "../../src/components/common/EmptyState";
 import { useDebounce } from "../../src/hooks/useDebounce";
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
 
 const recipes = recipesData as Recipe[];
 

@@ -1,8 +1,8 @@
-import React from "react";
-import { ScrollView, Text, StyleSheet, Pressable, View } from "react-native";
-import { COLORS, SPACING, RADIUS, FONTS } from "../../constants/theme";
 import * as Haptics from "expo-haptics";
+import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { COLORS, RADIUS, SPACING } from "../../constants/theme";
 
 const CATEGORY_EMOJIS: { [key: string]: string } = {
   "All": "✨",

@@ -1,16 +1,15 @@
+import { useRouter } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, SPACING, FONTS, RADIUS } from "../../src/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { useFavorites } from "../../src/context/FavoritesContext";
-import { Recipe } from "../../src/types";
-import recipesData from "../../src/data/recipes.json";
+import EmptyState from "../../src/components/common/EmptyState";
 import RecipeListItem from "../../src/components/recipe/RecipeListItem";
 import SwipeableRow from "../../src/components/recipe/SwipeableRow";
-import EmptyState from "../../src/components/common/EmptyState";
-import { useRouter } from "expo-router";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { COLORS, FONTS, RADIUS, SPACING } from "../../src/constants/theme";
+import { useFavorites } from "../../src/context/FavoritesContext";
+import recipesData from "../../src/data/recipes.json";
+import { Recipe } from "../../src/types";
 
 const recipes = recipesData as Recipe[];
 

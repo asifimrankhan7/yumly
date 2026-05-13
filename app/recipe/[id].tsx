@@ -14,11 +14,11 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import IngredientList from "../../src/components/recipe/IngredientList";
 import InstructionStep from "../../src/components/recipe/InstructionStep";
 import { RecipeImages } from "../../src/constants/recipe-images";
-import { COLORS, RADIUS, SHADOWS, SPACING, FONTS } from "../../src/constants/theme";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
 import { useMealPlan } from "../../src/context/MealPlanContext";
 import recipesData from "../../src/data/recipes.json";
@@ -66,8 +66,8 @@ export default function RecipeDetailScreen() {
 
     if (shouldStartCooking) {
       router.push({
-        pathname: `/cooking/${recipe.id}`,
-        params: { servings: servings },
+        pathname: "/cooking/[id]",
+        params: { id: recipe.id, servings: servings },
       });
     } else {
       router.push("/(tabs)/mealplan");

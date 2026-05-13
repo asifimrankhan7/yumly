@@ -1,4 +1,4 @@
-export const RecipeImages: { [key: string]: any } = {
+export const RecipeImages: { [key: string]: string } = {
   "it_1": require("../../assets/images/recipes/margherita_pizza.png"),
   "mx_1": require("../../assets/images/recipes/chicken_tacos.png"),
   "ch_1": require("../../assets/images/recipes/kung_pao_chicken.png"),

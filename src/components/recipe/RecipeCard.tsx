@@ -1,15 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { COLORS, RADIUS, SHADOWS, SPACING, FONTS } from "../../constants/theme";
 import { RecipeImages } from "../../constants/recipe-images";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
 import { useFavorites } from "../../context/FavoritesContext";
 import { Recipe } from "../../types";
-import * as Haptics from "expo-haptics";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - SPACING.m * 3) / 2;

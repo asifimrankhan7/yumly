@@ -1,19 +1,19 @@
-import React, { useRef, useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "expo-router";
+import React, { useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Dimensions,
   FlatList,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import Animated, { FadeIn, FadeInRight } from "react-native-reanimated";
-import { COLORS, RADIUS, SHADOWS, SPACING, FONTS } from "../../constants/theme";
 import { RecipeImages } from "../../constants/recipe-images";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
 import { Recipe } from "../../types";
 
 const { width } = Dimensions.get("window");
@@ -46,7 +46,7 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
       <View style={styles.sectionHeader}>
         <View>
           <Text style={styles.sectionLabel}>FEATURED</Text>
-          <Text style={styles.sectionTitle}>Chef's Picks</Text>
+          <Text style={styles.sectionTitle}>Chef{"'"}s Picks</Text>
         </View>
         <View style={styles.paginationDots}>
           {featured.map((_, i) => (

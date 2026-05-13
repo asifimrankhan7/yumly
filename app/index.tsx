@@ -1,30 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
+  Dimensions,
   Image,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  StatusBar,
-  Platform,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withRepeat,
-  withDelay,
   Easing,
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming
 } from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS, RADIUS, SPACING, FONTS } from "../src/constants/theme";
+import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
 const { width, height } = Dimensions.get("window");
@@ -385,7 +382,7 @@ const StepTwo = ({
           What should{"\n"}we call you?
         </Text>
         <Text style={styles.s2Sub}>
-          We'll personalize your entire food journey around your
+          We{"'"}ll personalize your entire food journey around your
           preferences.
         </Text>
 
@@ -424,7 +421,7 @@ const StepTwo = ({
                 <View style={styles.loadingDot} />
               </View>
             ) : (
-              <Text style={styles.mainBtnText}>Let's Cook →</Text>
+              <Text style={styles.mainBtnText}>Let{"'"}s Cook →</Text>
             )}
           </LinearGradient>
         </TouchableOpacity>

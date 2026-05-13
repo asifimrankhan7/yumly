@@ -1,18 +1,11 @@
-import React from "react";
-import { Tabs } from "expo-router";
-import { Platform, StyleSheet, View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import React from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
 import { useMealPlan } from "../../src/context/MealPlanContext";
-import { BlurView } from "expo-blur";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TAB_ITEMS = [
   { name: "index", title: "Explore", iconActive: "compass", iconInactive: "compass-outline" },
