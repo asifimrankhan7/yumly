@@ -50,11 +50,11 @@ export default function CategoryBar({
           >
             <Pressable
               onPress={() => handleSelect(category)}
-              style={[styles.pill, isActive && styles.pillActive]}
+              style={StyleSheet.flatten([styles.pill, isActive && styles.pillActive])}
             >
               <Text style={styles.emoji}>{emoji}</Text>
               <Text
-                style={[styles.pillText, isActive && styles.pillTextActive]}
+                style={StyleSheet.flatten([styles.pillText, isActive && styles.pillTextActive])}
               >
                 {category}
               </Text>
