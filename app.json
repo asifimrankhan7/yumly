@@ -9,9 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aik.yumly"
     },
     "android": {
+      "package": "com.aik.yumly",
       "adaptiveIcon": {
         "backgroundColor": "#0E0E10",
         "foregroundImage": "./assets/images/icon.png"
@@ -19,6 +21,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
+    "runtimeVersion": "1.0.0",
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
