@@ -21,6 +21,7 @@ import Animated, {
   withRepeat,
   withTiming
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
@@ -149,7 +150,7 @@ export default function OnboardingScreen() {
     (nextStep: number) => {
       screenOpacity.value = withTiming(0, { duration: 300 }, () => {
         screenTranslateX.value = 50;
-        setStep(nextStep);
+        scheduleOnRN(setStep, nextStep);
         screenTranslateX.value = withTiming(0, { duration: 400 });
         screenOpacity.value = withTiming(1, { duration: 400 });
       });
