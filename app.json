@@ -8,7 +8,6 @@
     "scheme": "yumly",
     "userInterfaceStyle": "automatic",
     "jsEngine": "hermes",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aik.yumly"
@@ -19,7 +18,6 @@
         "backgroundColor": "#0E0E10",
         "foregroundImage": "./assets/images/icon.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "runtimeVersion": "1.0.0",

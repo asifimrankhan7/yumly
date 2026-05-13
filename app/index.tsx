@@ -24,7 +24,7 @@ import Animated, {
 import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 // --- Sub-components ---
 
@@ -73,7 +73,7 @@ const FloatingOrb = ({
         true
       )
     );
-  }, []);
+  }, [delay, floatX, floatY, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -108,7 +108,7 @@ const Particle = ({ delay = 0 }: { delay?: number }) => {
       delay,
       withRepeat(withTiming(1, { duration: 2000 }), -1, true)
     );
-  }, []);
+  }, [delay, opacity, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -143,7 +143,7 @@ export default function OnboardingScreen() {
     if (!isUserLoading && onboardingComplete) {
       router.replace("/(tabs)");
     }
-  }, [onboardingComplete, isUserLoading]);
+  }, [onboardingComplete, isUserLoading, router]);
 
   const switchStep = useCallback(
     (nextStep: number) => {
@@ -154,7 +154,7 @@ export default function OnboardingScreen() {
         screenOpacity.value = withTiming(1, { duration: 400 });
       });
     },
-    []
+    [screenOpacity, screenTranslateX]
   );
 
   const handleNextStep = () => {
@@ -268,7 +268,7 @@ const StepOne = ({ onNext }: { onNext: () => void }) => {
       -1,
       true
     );
-  }, []);
+  }, [pulse, rotate]);
 
   const plateAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulse.value }],
